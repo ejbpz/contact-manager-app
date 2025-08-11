@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i ./StockApp/wwwroot/css/input.css -o ./StockApp/wwwroot/css/styles.css --watch"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.11",
+    "tailwindcss": "^4.1.11"
+  }
+}
