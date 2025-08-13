@@ -1,6 +1,7 @@
 ﻿using ContactsManager.Models;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
+using System.Diagnostics.Metrics;
 
 namespace ContactsManager.Services
 {
@@ -27,6 +28,18 @@ namespace ContactsManager.Services
             _countries.Add(newCountry);
 
             return newCountry.ToCountryResponse();
+        }
+
+        public List<CountryResponse> GetAllCountries()
+        {
+            return _countries.Select(country => country.ToCountryResponse()).ToList();
+        }
+
+        public CountryResponse? GetCountryByCountryId(Guid? countryId)
+        {
+            if (countryId is null) return null;
+
+            return _countries.FirstOrDefault(country => country.CountryId == countryId)?.ToCountryResponse();
         }
     }
 }

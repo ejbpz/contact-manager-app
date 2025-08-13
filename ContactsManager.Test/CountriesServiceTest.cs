@@ -13,6 +13,7 @@ namespace ContactsManager.Test
             _countriesService = new CountriesService();
         }
 
+        #region AddCountry
         // When CountryAddRequest is null (ArgumentNullException).
         [Fact]
         public void AddCountry_NullCountry()
@@ -75,9 +76,96 @@ namespace ContactsManager.Test
 
             // Act
             CountryResponse countryResponse = _countriesService.AddCountry(request);
+            List<CountryResponse> actualAllProducts = _countriesService.GetAllCountries();
 
             // Assert
             Assert.True(countryResponse.CountryId != Guid.Empty);
+            Assert.Contains(countryResponse, actualAllProducts);
         }
+        #endregion
+
+        #region GetAllCountries
+        // When the list of countries is empty by default.
+        [Fact]
+        public void GetAllCountries_EmptyList()
+        {
+            // Act
+            List<CountryResponse> actualCountryList = _countriesService.GetAllCountries();
+
+            // Assert
+            Assert.Empty(actualCountryList);
+        }
+
+        [Fact]
+        public void GetAllCountries_AddFewCountries()
+        {
+            // Arrange
+            List<CountryAddRequest> actualCountryList = new List<CountryAddRequest>()
+            {
+                new CountryAddRequest()
+                {
+                    CountryName = "Germany"
+                },
+                new CountryAddRequest()
+                {
+                    CountryName = "Canada"
+                },
+                new CountryAddRequest()
+                {
+                    CountryName = "Costa Rica"
+                },
+            };
+
+            List<CountryResponse> countryResponses = new List<CountryResponse>();
+
+            // Act
+            foreach (CountryAddRequest countryAddRequest in actualCountryList)
+            {
+                countryResponses.Add(_countriesService.AddCountry(countryAddRequest));
+            }
+
+            List<CountryResponse> allCountries = _countriesService.GetAllCountries();
+
+            // Assert
+            foreach (CountryResponse expectedCountry in countryResponses)
+            {
+                Assert.Contains(expectedCountry, allCountries);
+            }
+        }
+        #endregion
+
+        #region GetCountryById
+        // When the CountryId is null, return null as a CountryResponse?
+        [Fact]
+        public void GetCountryById_NullCountryId()
+        {
+            // Arrange
+            Guid? countryId = null;
+
+            // Act
+            CountryResponse? countryResponse = _countriesService.GetCountryByCountryId(countryId);
+
+            // Assert
+            Assert.Null(countryResponse);
+        }
+
+        // When we supply a valid CountryId, it should return a CountryResponse.
+        [Fact]
+        public void GetCountryById_ProperId()
+        {
+            // Arrange
+            CountryAddRequest countryAddRequest = new CountryAddRequest()
+            {
+                CountryName = "Costa Rica",
+            };
+
+            // Act
+            CountryResponse expectedResponse = _countriesService.AddCountry(countryAddRequest);
+            CountryResponse? countryResponse = _countriesService.GetCountryByCountryId(expectedResponse.CountryId);
+
+            // Assert
+            Assert.Equal(expectedResponse, countryResponse);
+        }
+        #endregion
     }
 }

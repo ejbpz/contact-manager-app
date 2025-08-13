@@ -12,6 +12,19 @@ namespace ContactsManager.ServiceContracts
         /// </summary>
         /// <param name="countryAddRequest">Country object to add.</param>
         /// <returns>Returns the country object after been added.</returns>
-        public CountryResponse AddCountry(CountryAddRequest? countryAddRequest);
+        CountryResponse AddCountry(CountryAddRequest? countryAddRequest);
+
+        /// <summary>
+        /// Retrieve all the countries in the list.
+        /// </summary>
+        /// <returns>Returns all the countries as a List of CountryResponse.</returns>
+        List<CountryResponse> GetAllCountries();
+
+        /// <summary>
+        /// Finds a Country base on its country ID.
+        /// </summary>
+        /// <param name="countryId">GUID to be searched.</param>
+        /// <returns>Returns the country with this GUID.</returns>
+        CountryResponse? GetCountryByCountryId(Guid? countryId);
     }
 }

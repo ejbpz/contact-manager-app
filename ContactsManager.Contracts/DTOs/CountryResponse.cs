@@ -9,6 +9,21 @@ namespace ContactsManager.ServiceContracts.DTOs
     {
         public Guid CountryId { get; set; }
         public string? CountryName { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is null) return false;
+            if (obj.GetType() != typeof(CountryResponse)) return false;
+
+            CountryResponse country = (CountryResponse)obj;
+
+            return this.CountryId == country.CountryId && this.CountryName == country.CountryName;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     public static class CountryExtensions
