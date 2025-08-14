@@ -1,5 +1,6 @@
 ﻿using ContactsManager.Models;
 using ContactsManager.ServiceContracts.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace ContactsManager.ServiceContracts.DTOs
 {
@@ -8,7 +9,11 @@ namespace ContactsManager.ServiceContracts.DTOs
     /// </summary>
     public class PersonAddRequest
     {
+        [Required(ErrorMessage = "Person Name cannot be null.")]
         public string? PersonName { get; set; }
+
+        [Required(ErrorMessage = "Email cannot be null.")]
+        [RegularExpression("^[a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$", ErrorMessage = "This text doesn't match to an email.")]
         public string? PersonEmail { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public GenderOptions? Gender { get; set; }
