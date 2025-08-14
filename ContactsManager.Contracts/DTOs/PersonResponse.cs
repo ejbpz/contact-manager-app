@@ -22,6 +22,24 @@ namespace ContactsManager.ServiceContracts.DTOs
         public bool IsReceivingNewsLetters { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"PersonId: {PersonId}, " +
+                $"PersonName: {PersonName}, " +
+                $"PersonEmail: {PersonEmail}, " +
+                $"DateOfBirth: {DateOfBirth?.ToString("dd-MMMM-yyyy")}, " +
+                $"Gender: {Gender}, " +
+                $"CountryId: {CountryId}, " +
+                $"CountryName: {CountryName}, " +
+                $"Address: {Address}, " +
+                $"Age: {Age}, " +
+                $"IsReceivingNewsLetters: {IsReceivingNewsLetters}";
+        }
+
+        /// <summary>
         /// Overriding Equals method to compare their attributes.
         /// </summary>
         /// <param name="obj">PersonResponse object to compare.</param>

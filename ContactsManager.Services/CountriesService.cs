@@ -30,7 +30,7 @@ namespace ContactsManager.Services
             return newCountry.ToCountryResponse();
         }
 
-        public List<CountryResponse> GetAllCountries()
+        public List<CountryResponse> GetCountries()
         {
             return _countries.Select(country => country.ToCountryResponse()).ToList();
         }
@@ -39,7 +39,7 @@ namespace ContactsManager.Services
         {
             if (countryId is null) return null;
 
-            return _countries.FirstOrDefault(country => country.CountryId == countryId)?.ToCountryResponse();
+            return _countries.FirstOrDefault(country => country.CountryId.Equals(countryId))?.ToCountryResponse();
         }
     }
 }

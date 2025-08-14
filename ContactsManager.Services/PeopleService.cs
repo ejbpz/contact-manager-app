@@ -1,20 +1,18 @@
 ﻿using ContactsManager.Models;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
-using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services.Helpers;
-using System.ComponentModel.DataAnnotations;
 
 namespace ContactsManager.Services
 {
     public class PeopleService : IPeopleService
     {
-        private List<PersonResponse> _peopleList;
-        private ICountriesService _countriesService;
+        private readonly List<Person> _peopleList;
+        private readonly ICountriesService _countriesService;
 
         public PeopleService()
         {
-            _peopleList = new List<PersonResponse>();
+            _peopleList = new List<Person>();
             _countriesService = new CountriesService();
         }
 
@@ -35,16 +33,21 @@ namespace ContactsManager.Services
             Person person = personAddRequest.ToPerson();
             person.PersonId = Guid.NewGuid();
 
-            PersonResponse personResponse = ConvertPersonToPersonResponse(person);
+            _peopleList.Add(person);
 
-            _peopleList.Add(personResponse);
-
-            return personResponse;
+            return ConvertPersonToPersonResponse(person);
         }
 
         public List<PersonResponse> GetPeople()
         {
-            return _peopleList;
+            return _peopleList.Select(person => person.ToPersonResponse()).ToList();
+        }
+
+        public PersonResponse? GetPersonByPersonId(Guid? personId)
+        {
+            if (personId is null) return null;
+
+             return _peopleList.FirstOrDefault(person => person.PersonId == personId)?.ToPersonResponse();
         }
     }
 }

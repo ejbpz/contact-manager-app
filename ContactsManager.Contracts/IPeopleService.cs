@@ -19,5 +19,12 @@ namespace ContactsManager.ServiceContracts
         /// </summary>
         /// <returns>Returns a list of people.</returns>
         List<PersonResponse> GetPeople();
+
+        /// <summary>
+        /// Request a person by its ID.
+        /// </summary>
+        /// <param name="personId">person's ID</param>
+        /// <returns>Returns a person, base on its ID.</returns>
+        PersonResponse? GetPersonByPersonId(Guid? personId);
     }
 }

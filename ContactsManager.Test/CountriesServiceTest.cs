@@ -76,7 +76,7 @@ namespace ContactsManager.Test
 
             // Act
             CountryResponse countryResponse = _countriesService.AddCountry(request);
-            List<CountryResponse> actualAllProducts = _countriesService.GetAllCountries();
+            List<CountryResponse> actualAllProducts = _countriesService.GetCountries();
 
             // Assert
             Assert.True(countryResponse.CountryId != Guid.Empty);
@@ -84,13 +84,13 @@ namespace ContactsManager.Test
         }
         #endregion
 
-        #region GetAllCountries
+        #region GetCountries
         // When the list of countries is empty by default.
         [Fact]
         public void GetAllCountries_EmptyList()
         {
             // Act
-            List<CountryResponse> actualCountryList = _countriesService.GetAllCountries();
+            List<CountryResponse> actualCountryList = _countriesService.GetCountries();
 
             // Assert
             Assert.Empty(actualCountryList);
@@ -124,7 +124,7 @@ namespace ContactsManager.Test
                 countryResponses.Add(_countriesService.AddCountry(countryAddRequest));
             }
 
-            List<CountryResponse> allCountries = _countriesService.GetAllCountries();
+            List<CountryResponse> allCountries = _countriesService.GetCountries();
 
             // Assert
             foreach (CountryResponse expectedCountry in countryResponses)

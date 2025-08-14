@@ -18,7 +18,7 @@ namespace ContactsManager.ServiceContracts
         /// Retrieve all the countries in the list.
         /// </summary>
         /// <returns>Returns all the countries as a List of CountryResponse.</returns>
-        List<CountryResponse> GetAllCountries();
+        List<CountryResponse> GetCountries();
 
         /// <summary>
         /// Finds a Country base on its country ID.
