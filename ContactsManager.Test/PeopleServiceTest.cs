@@ -3,6 +3,7 @@ using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services;
+using System;
 using Xunit.Abstractions;
 
 namespace ContactsManager.Test
@@ -374,6 +375,127 @@ namespace ContactsManager.Test
             for (int i = 0; i < listOfPeopleSorted.Count; i++)
             {
                 Assert.Equal(listOfPeopleSorted[i], listOfPeopleAdded[i]);
+            }
+        }
+        #endregion
+
+        #region UpdatePerson
+        // If we supply a null value, should throw an exception (ArgumentNullException).
+        [Fact]
+        public void UpdatePerson_NullPerson()
+        {
+            // Arrange
+            PersonUpdateRequest? personUpdate = null;
+
+            // Assert
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                // Act
+                _peopleService.UpdatePerson(personUpdate);
+            });
+        }
+
+        // If we supply a null person id or not known id, should throw an exception (ArgumentException).
+        [Fact]
+        public void UpdatePerson_NullPersonId()
+        {
+            // Arrange
+            List<CountryResponse?> countriesAdded = AddingCountries();
+
+            PersonUpdateRequest? personUpdate = new PersonUpdateRequest()
+            {
+                PersonId = Guid.NewGuid(),
+                PersonName = "Person Name",
+                PersonEmail = "sample@email",
+                DateOfBirth = new DateTime(2004, 9, 8),
+                Gender = GenderOptions.Male,
+                CountryId = countriesAdded[0]!.CountryId,
+                Address = "sample street",
+                IsReceivingNewsLetters = true,
+            };
+
+            // Assert
+            Assert.Throws<ArgumentException>(() =>
+            {
+                // Act
+                _peopleService.UpdatePerson(personUpdate);
+            });
+        }
+
+        // If we supply a null person name, should throw an exception (ArgumentException).
+        [Fact]
+        public void UpdatePerson_NullPersonName()
+        {
+            // Arrange
+            List<CountryResponse?> countriesAdded = AddingCountries();
+            List<PersonResponse> peopleAdded = AddingPeople(countriesAdded);
+
+            PersonUpdateRequest? personUpdate = peopleAdded[0].ToPersonUpdateRequest();
+            personUpdate.PersonName = null;
+
+            // Assert
+            Assert.Throws<ArgumentException>(() =>
+            {
+                // Act
+                _peopleService.UpdatePerson(personUpdate);
+            });
+        }
+
+        // If we supply a null person name, should throw an exception (ArgumentException).
+        [Fact]
+        public void UpdatePerson_ProperPerson()
+        {
+            // Arrange
+            List<CountryResponse?> countriesAdded = AddingCountries();
+            List<PersonResponse> peopleAdded = AddingPeople(countriesAdded);
+
+            PersonUpdateRequest? personUpdate = peopleAdded[0].ToPersonUpdateRequest();
+            personUpdate.PersonName = "Eduardo";
+            personUpdate.PersonEmail = "email@example.com";
+
+            // Act
+            PersonResponse personResponse = _peopleService.UpdatePerson(personUpdate);
+
+            PersonResponse? personExpected = _peopleService.GetPersonByPersonId(personResponse.PersonId);
+
+            // Assert
+            Assert.Equal(personExpected, personResponse);
+        }
+        #endregion
+
+        #region DeletePerson
+        // If we supply an invalid PersonId (null | it does not exist), it should return false.
+        [Fact]
+        public void DeletePerson_WrongId()
+        {
+            // Act
+            bool wasDeleted1 = _peopleService.DeletePerson(Guid.NewGuid());
+            bool wasDeleted2 = _peopleService.DeletePerson(null);
+
+            // Assert
+            Assert.False(wasDeleted1);
+            Assert.False(wasDeleted2);
+        }
+
+        // If we supply a valid PersonId (exist), it should return true;
+        [Fact]
+        public void DeletePerson_ProperId()
+        {
+            // Arrange
+            List<CountryResponse?> countriesAdded = AddingCountries();
+            List<PersonResponse> peopleAdded = AddingPeople(countriesAdded);
+            List<bool> wereDeleted = new List<bool>();
+
+            // Act
+            foreach (PersonResponse personResponse in peopleAdded)
+            {
+                wereDeleted.Add(_peopleService.DeletePerson(personResponse.PersonId));
+            }
+
+            // Assert
+            foreach (bool wasDeleted in wereDeleted)
+            {
+                Assert.True(wasDeleted);
             }
         }
         #endregion

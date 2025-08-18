@@ -1,7 +1,6 @@
 ﻿using ContactsManager.Models;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
-using System.Diagnostics.Metrics;
 
 namespace ContactsManager.Services
 {

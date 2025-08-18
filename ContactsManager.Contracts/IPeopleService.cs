@@ -44,5 +44,19 @@ namespace ContactsManager.ServiceContracts
         /// <param name="sortOrder">Ascending or descending.</param>
         /// <returns>Returns a sorted group of people based on the property and the order selected.</returns>
         List<PersonResponse> GetSortedPeople(List<PersonResponse> allPeople, string sortBy, SortOrderOptions sortOrder);
+
+        /// <summary>
+        /// Updates an specific person details by its id.
+        /// </summary>
+        /// <param name="personUpdateRequest">Person to be updated.</param>
+        /// <returns>Returns the same person with its attributes updated.</returns>
+        PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest);
+
+        /// <summary>
+        /// Deletes a person using its id.
+        /// </summary>
+        /// <param name="personId">Id to the person to be deleted.</param>
+        /// <returns>Returns bool to know if was deleted.</returns>
+        bool DeletePerson(Guid? personId);
     }
 }

@@ -3,6 +3,7 @@ using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace ContactsManager.Services
 {
@@ -145,6 +146,38 @@ namespace ContactsManager.Services
             };
 
             return sortedPeople;
+        }
+
+        public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
+        {
+            if (personUpdateRequest is null) throw new ArgumentNullException(nameof(personUpdateRequest));
+
+            ValidationHelper.ModelValidation(personUpdateRequest);
+
+            Person? personToUpdate = _peopleList.FirstOrDefault(p => p.PersonId == personUpdateRequest.PersonId);
+
+            if (personToUpdate is null) throw new ArgumentException("Give person Id doesn't exist.");
+
+            personToUpdate.PersonName = personUpdateRequest.PersonName;
+            personToUpdate.PersonEmail = personUpdateRequest.PersonEmail;
+            personToUpdate.DateOfBirth = personUpdateRequest.DateOfBirth;
+            personToUpdate.Gender = personUpdateRequest.Gender.ToString();
+            personToUpdate.CountryId = personUpdateRequest.CountryId;
+            personToUpdate.Address = personUpdateRequest.Address;
+            personToUpdate.IsReceivingNewsLetters = personUpdateRequest.IsReceivingNewsLetters;
+
+            return personToUpdate.ToPersonResponse();
+        }
+
+        public bool DeletePerson(Guid? personId)
+        {
+            if (personId is null) throw new ArgumentNullException(nameof(personId));
+
+            Person? person = _peopleList.FirstOrDefault(p => p.PersonId == personId);
+
+            if (person is null) return false;
+
+            return _peopleList.Remove(person);
         }
     }
 }

@@ -64,6 +64,21 @@ namespace ContactsManager.ServiceContracts.DTOs
         {
             return base.GetHashCode();
         }
+
+        public PersonUpdateRequest ToPersonUpdateRequest()
+        {
+            return new PersonUpdateRequest()
+            {
+                PersonId = PersonId,
+                PersonName = PersonName,
+                Address = Address,
+                CountryId = CountryId,
+                DateOfBirth = DateOfBirth,
+                PersonEmail = PersonEmail,
+                Gender = (GenderOptions)Enum.Parse(typeof(GenderOptions), Gender ?? "Other", true),
+                IsReceivingNewsLetters = IsReceivingNewsLetters,
+            };
+        }
     }
 
     public static class PersonExtensions
@@ -88,5 +103,7 @@ namespace ContactsManager.ServiceContracts.DTOs
                     : null,
             };
         }
+
+
     }
 }
