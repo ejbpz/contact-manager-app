@@ -30,7 +30,7 @@ namespace ContactsManager.ServiceContracts.DTOs
             return $"PersonId: {PersonId}, " +
                 $"PersonName: {PersonName}, " +
                 $"PersonEmail: {PersonEmail}, " +
-                $"DateOfBirth: {DateOfBirth?.ToString("dd-MMMM-yyyy")}, " +
+                $"DateOfBirth: {DateOfBirth?.ToString("dd MMMM yyyy")}, " +
                 $"Gender: {Gender}, " +
                 $"CountryId: {CountryId}, " +
                 $"CountryName: {CountryName}, " +

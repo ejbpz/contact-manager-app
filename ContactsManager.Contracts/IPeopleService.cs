@@ -1,4 +1,5 @@
 ﻿using ContactsManager.ServiceContracts.DTOs;
+using ContactsManager.ServiceContracts.Enums;
 
 namespace ContactsManager.ServiceContracts
 {
@@ -26,5 +27,22 @@ namespace ContactsManager.ServiceContracts
         /// <param name="personId">person's ID</param>
         /// <returns>Returns a person, base on its ID.</returns>
         PersonResponse? GetPersonByPersonId(Guid? personId);
+
+        /// <summary>
+        /// Finds all the people that matched with the given filter and search string.
+        /// </summary>
+        /// <param name="searchBy">Filter to seach people.</param>
+        /// <param name="query">Text to search.</param>
+        /// <returns>Returns a list of people that match with the query.</returns>
+        List<PersonResponse> GetFilteredPeople(string searchBy, string? query);
+
+        /// <summary>
+        /// Sort a group of people by user preferences.
+        /// </summary>
+        /// <param name="allPeople">Group of people to sort.</param>
+        /// <param name="sortBy">Column or property.</param>
+        /// <param name="sortOrder">Ascending or descending.</param>
+        /// <returns>Returns a sorted group of people based on the property and the order selected.</returns>
+        List<PersonResponse> GetSortedPeople(List<PersonResponse> allPeople, string sortBy, SortOrderOptions sortOrder);
     }
 }
