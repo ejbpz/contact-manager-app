@@ -56,6 +56,7 @@ namespace ContactsManager.ServiceContracts.DTOs
                 this.DateOfBirth == personResponse.DateOfBirth &&
                 this.Gender == personResponse.Gender &&
                 this.CountryId == personResponse.CountryId &&
+                this.CountryName == personResponse.CountryName &&
                 this.Address == personResponse.Address &&
                 this.IsReceivingNewsLetters == personResponse.IsReceivingNewsLetters;
         }
@@ -69,14 +70,14 @@ namespace ContactsManager.ServiceContracts.DTOs
         {
             return new PersonUpdateRequest()
             {
-                PersonId = PersonId,
-                PersonName = PersonName,
                 Address = Address,
+                PersonId = PersonId,
                 CountryId = CountryId,
-                DateOfBirth = DateOfBirth,
+                PersonName = PersonName,
                 PersonEmail = PersonEmail,
-                Gender = (GenderOptions)Enum.Parse(typeof(GenderOptions), Gender ?? "Other", true),
+                DateOfBirth = DateOfBirth,
                 IsReceivingNewsLetters = IsReceivingNewsLetters,
+                Gender = (GenderOptions)Enum.Parse(typeof(GenderOptions), Gender ?? "Other", true),
             };
         }
     }
@@ -90,13 +91,13 @@ namespace ContactsManager.ServiceContracts.DTOs
         {
             return new PersonResponse()
             {
+                Gender = person.Gender,
+                Address = person.Address,
                 PersonId = person.PersonId,
+                CountryId = person.CountryId,
                 PersonName = person.PersonName,
                 PersonEmail = person.PersonEmail,
                 DateOfBirth = person.DateOfBirth,
-                Gender = person.Gender,
-                CountryId = person.CountryId,
-                Address = person.Address,
                 IsReceivingNewsLetters = person.IsReceivingNewsLetters,
                 Age = (person.DateOfBirth is not null) 
                     ? Math.Floor((DateTime.Now - person.DateOfBirth.Value).TotalDays / 365.25) 

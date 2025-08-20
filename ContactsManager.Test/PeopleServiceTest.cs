@@ -16,8 +16,8 @@ namespace ContactsManager.Test
 
         public PeopleServiceTest(ITestOutputHelper testOutputHelper)
         {
-            _peopleService = new PeopleService();
-            _countryService = new CountriesService();
+            _peopleService = new PeopleService(false);
+            _countryService = new CountriesService(false);
             _testOutputHelper = testOutputHelper;
         }
 

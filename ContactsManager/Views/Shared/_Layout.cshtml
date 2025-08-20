@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width"/>
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/css/input.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/fontawesome.min.css" integrity="sha512-J2Gce+WmOttffHOrVKLTlzxIalPXUMDbSfn5ADqp8Vj9EngnjNHr+jjiL3ZB8muEzo+K51gU10X+0eGqGNL7QA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="~/css/styles.css"/>
+</head>
+<body>
+    <div>
+        <nav>
+            <div>
+                Application Logo
+            </div>
+            <ul>
+                <li>
+                    <a href="~/people">People</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container mx-auto">
+        @RenderBody()
+    </div>
+</body>
+</html>
