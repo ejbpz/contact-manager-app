@@ -6,6 +6,30 @@
 
 <h1>People</h1>
 
+<form action="~/people" method="get">
+    <div>
+        <div>
+            <select name="searchBy">
+                @foreach (KeyValuePair<string, string> option in ViewBag.SearchFields)
+                {
+                    <option @(option.Key == ViewBag.CurrentSearchBy ? "selected" : "")
+                        value="@option.Key">@option.Value
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div>
+            <input type="search" id="SearchPeople" placeholder="Search people" name="searchQuery" value="@ViewBag.CurrentSearchQuery"/>
+            <a href="~/people">X</a>
+        </div>
+
+        <div>
+            <button type="submit">Search</button>
+        </div>
+    </div>
+</form>
+
 <table>
     <thead>
         <tr>

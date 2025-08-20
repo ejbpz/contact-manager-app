@@ -180,42 +180,42 @@ namespace ContactsManager.Services
 
             switch (searchBy)
             {
-                case nameof(Person.PersonName):
+                case nameof(PersonResponse.PersonName):
                     matchingPeople = allPeople.Where(person => 
                         (!string.IsNullOrEmpty(person.PersonName)) 
                             ? person.PersonName.Contains(query, StringComparison.OrdinalIgnoreCase)
                             : true
                     ).ToList();
                     break;
-                case nameof(Person.PersonEmail):
+                case nameof(PersonResponse.PersonEmail):
                     matchingPeople = allPeople.Where(person =>
                         (!string.IsNullOrEmpty(person.PersonEmail))
                             ? person.PersonEmail.Contains(query, StringComparison.OrdinalIgnoreCase)
                             : true
                     ).ToList();
                     break;
-                case nameof(Person.DateOfBirth):
+                case nameof(PersonResponse.DateOfBirth):
                     matchingPeople = allPeople.Where(person =>
                         (!string.IsNullOrEmpty(person.DateOfBirth.ToString()))
                             ? person.DateOfBirth!.Value.ToString("dd MMMM yyyy").Contains(query, StringComparison.OrdinalIgnoreCase)
                             : true
                     ).ToList();
                     break;
-                case nameof(Person.Gender):
+                case nameof(PersonResponse.Gender):
                     matchingPeople = allPeople.Where(person =>
                         (!string.IsNullOrEmpty(person.Gender))
-                            ? person.Gender.Contains(query, StringComparison.OrdinalIgnoreCase)
+                            ? person.Gender.Equals(query, StringComparison.OrdinalIgnoreCase)
                             : true
                     ).ToList();
                     break;
-                case nameof(Person.CountryId):
+                case nameof(PersonResponse.CountryName):
                     matchingPeople = allPeople.Where(person =>
                         (!string.IsNullOrEmpty(person.CountryName))
                             ? person.CountryName.Contains(query, StringComparison.OrdinalIgnoreCase)
                             : true
                     ).ToList();
                     break;
-                case nameof(Person.Address):
+                case nameof(PersonResponse.Address):
                     matchingPeople = allPeople.Where(person =>
                         (!string.IsNullOrEmpty(person.Address))
                             ? person.Address.Contains(query, StringComparison.OrdinalIgnoreCase)
