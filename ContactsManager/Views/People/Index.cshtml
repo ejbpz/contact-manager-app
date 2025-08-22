@@ -28,34 +28,41 @@
             <button type="submit">Search</button>
         </div>
     </div>
-</form>
 
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Age</th>
-            <th>Gender</th>
-            <th>Email</th>
-            <th>Date of Birth</th>
-            <th>Country</th>
-            <th>Address</th>
-            <th>Receive Newsletter</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (PersonResponse person in Model)
-        {
-           <tr>
-                <td>@person.PersonName</td>
-                <td>@person.Age</td>
-                <td>@person.Gender</td>
-                <td>@person.PersonEmail</td>
-                <td>@person.DateOfBirth?.ToString("dd - MMMM - yyyy")</td>
-                <td>@person.CountryName</td>
-                <td>@person.Address</td>
-                <td>@(person.IsReceivingNewsLetters ? "Yes" : "No")</td>
-           </tr> 
-        }
-    </tbody>
-</table>
+    <table>
+        <thead>
+            <tr>
+                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.PersonName) }, { "HeaderName", "Name" } })
+
+                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.Age) }, { "HeaderName", "Age" } })
+
+                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.Gender) }, { "HeaderName", "Gender" } })
+                
+                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.PersonEmail) }, { "HeaderName", "Email" } })
+                
+                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.DateOfBirth) }, { "HeaderName", "Date Of Birth" } })
+                
+                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.CountryName) }, { "HeaderName", "Country" } })
+                
+                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.Address) }, { "HeaderName", "Address" } })
+                
+                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.IsReceivingNewsLetters) }, { "HeaderName", "Receive Newsletter" } })
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (PersonResponse person in Model)
+            {
+               <tr style="width: 100vw;">
+                    <td style="width:5%;">@person.PersonName</td>
+                    <td style="width:3%;">@person.Age</td>
+                    <td style="width:6%;">@person.Gender</td>
+                    <td style="width:13%;">@person.PersonEmail</td>
+                    <td style="width:10%;">@person.DateOfBirth?.ToString("dd/MM/yyyy")</td>
+                    <td style="width:7%;">@person.CountryName</td>
+                    <td style="width:14%;">@person.Address</td>
+                    <td style="width:3%;">@(person.IsReceivingNewsLetters ? "Yes" : "No")</td>
+               </tr> 
+            }
+        </tbody>
+    </table>
+</form>

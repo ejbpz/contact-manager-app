@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "New Person";
+}
+
+<div>
+    <a href="~/people/"><=</a>
+    <h2>Create new person</h2>
+</div>
+
+<section>
+    <form action="~/people/new-person" method="post">
+        @* PersonName field *@
+        <div>
+            <label for="PersonName">
+               * First name
+            </label>
+            <div>
+                <input type="text" id="PersonName" name="PersonName" placeholder="Jhon Doe"/>
+            </div>
+        </div>
+
+        @* PersonEmail field *@
+        <div>
+            <label for="PersonEmail">
+                * Type your email
+            </label>
+            <div>
+                <input type="email" id="PersonEmail" name="PersonEmail" placeholder="email@example.com" />
+            </div>
+        </div>
+
+        @* DateOfBirth field *@
+        <div>
+            <label for="DateOfBirth">
+                Date Of birth
+            </label>
+            <div>
+                <input type="date" id="DateOfBirth" name="DateOfBirth" min="2000-01-01" value="@DateTime.Now.ToString("2000-01-01")" />
+            </div>
+        </div>
+
+        @* Gender field *@
+        <div>
+            <label for="Gender">
+                Choose your gender
+            </label>
+            <div>
+                @foreach (KeyValuePair<string, string> gender in ViewBag.Genders)
+                {
+                    <input type="radio" id="@gender.Key" name="Gender" value="@gender.Key" />
+                    <label for="@gender.Key">@gender.Value</label>
+                }
+            </div>
+        </div>
+
+        @* Country field *@
+        <div>
+            <label for="CountryId">
+                Country
+            </label>
+            <div>
+                <select name="CountryId" id="CountryId">
+                    @foreach (CountryResponse country in ViewBag.Countries)
+                    {    
+                        <option value="@country.CountryId">@country.CountryName</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <button type="submit">Create</button>
+    </form>
+</section>

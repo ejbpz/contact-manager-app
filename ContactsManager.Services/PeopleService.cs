@@ -167,7 +167,7 @@ namespace ContactsManager.Services
 
                Person? person = _peopleList.FirstOrDefault(person => person.PersonId == personId);
 
-            if (person is null) return person?.ToPersonResponse();
+            if (person is null) return null;
             return ConvertPersonToPersonResponse(person);
         }
 
@@ -285,7 +285,7 @@ namespace ContactsManager.Services
             personToUpdate.Address = personUpdateRequest.Address;
             personToUpdate.IsReceivingNewsLetters = personUpdateRequest.IsReceivingNewsLetters;
 
-            return personToUpdate.ToPersonResponse();
+            return ConvertPersonToPersonResponse(personToUpdate);
         }
 
         public bool DeletePerson(Guid? personId)
