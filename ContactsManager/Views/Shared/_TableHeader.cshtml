@@ -6,14 +6,9 @@
 
 <th>
     <a href="~/people?
-        searchBy=@(ViewBag.CurrentSearchBy)&
-        searchQuery=@(ViewBag.CurrentSearchQuery)&
-        sortBy=@(ViewBag.NameOf)&
-        sortOrderOptions=@(ViewBag.CurrentSortOrder)">@ViewBag.HeaderName
+        searchBy=@(ViewBag.CurrentSearchBy)&searchQuery=@(ViewBag.CurrentSearchQuery)&sortBy=@(ViewBag.NameOf)&sortOrderOptions=@(ViewBag.CurrentSortOrder)">@ViewBag.HeaderName
     </a>
     <i class="
-        fa-solid 
-        fa-arrow-@(ViewBag.CurrentSortOrder is SortOrderOptions.Ascending ? "up" : "down") 
-        @(ViewBag.CurrentSortBy == ViewBag.NameOf ? "show" : "hidden")">
+        fa-solid fa-arrow-@(ViewBag.CurrentSortOrder is SortOrderOptions.Ascending ? "up" : "down") @(ViewBag.CurrentSortBy == ViewBag.NameOf ? "show" : "hidden")">
     </i>
 </th>

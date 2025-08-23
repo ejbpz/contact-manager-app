@@ -2,6 +2,7 @@
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace ContactsManager.Controllers
 {
@@ -23,15 +24,7 @@ namespace ContactsManager.Controllers
         public IActionResult Index(string searchBy, string? searchQuery, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrderOptions = SortOrderOptions.Ascending)
         {
             // Searching
-            ViewBag.SearchFields = new Dictionary<string, string>()
-            {
-                { nameof(PersonResponse.PersonName), "Name" },
-                { nameof(PersonResponse.PersonEmail), "Email" },
-                { nameof(PersonResponse.DateOfBirth), "Date of Birth" },
-                { nameof(PersonResponse.Gender), "Gender" },
-                { nameof(PersonResponse.CountryName), "Country" },
-                { nameof(PersonResponse.Address), "Address" },
-            };
+            CreateColumns();
 
             List<PersonResponse> allPeople = _peopleService.GetFilteredPeople(searchBy, searchQuery);
 
@@ -50,15 +43,55 @@ namespace ContactsManager.Controllers
         [HttpGet("new-person")]
         public IActionResult Create()
         {
-            ViewBag.Genders = new Dictionary<string, string>()
+            CallingGenders();
+            CallingCountries();
+
+            return View();
+        }
+
+        //<form action = "~/people/new-person" method="post">
+        [HttpPost("new-person")]
+        public IActionResult Create(PersonAddRequest? personAddRequest)
+        {
+            if(!ModelState.IsValid)
+            {
+                CallingGenders();
+                CallingCountries();
+
+                ViewBag.Errors = ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
+
+                return View();
+            }
+            _peopleService.AddPerson(personAddRequest);
+            return RedirectToAction("Index", "People");
+        }
+
+        private void CallingGenders()
+        {
+            ViewData["Genders"] = new Dictionary<string, string>()
             {
                 { nameof(GenderOptions.Male), "Male" },
                 { nameof(GenderOptions.Female), "Female" },
                 { nameof(GenderOptions.Other), "Other" },
             };
-            ViewBag.Countries = _countriesService.GetCountries();
+        }
 
-            return View();
+        private void CallingCountries()
+        {
+            ViewData["Countries"] = _countriesService.GetCountries();
+        }
+    
+        private void CreateColumns()
+        {
+            ViewBag.SearchFields = new Dictionary<string, string>()
+            {
+                { nameof(PersonResponse.PersonName), "Name" },
+                { nameof(PersonResponse.PersonEmail), "Email" },
+                { nameof(PersonResponse.DateOfBirth), "Date of Birth" },
+                { nameof(PersonResponse.Gender), "Gender" },
+                { nameof(PersonResponse.CountryName), "Country" },
+                { nameof(PersonResponse.Address), "Address" },
+            };
         }
     }
 }

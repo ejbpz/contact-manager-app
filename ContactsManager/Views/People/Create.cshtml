@@ -35,7 +35,7 @@
                 Date Of birth
             </label>
             <div>
-                <input type="date" id="DateOfBirth" name="DateOfBirth" min="2000-01-01" value="@DateTime.Now.ToString("2000-01-01")" />
+                <input type="date" id="DateOfBirth" name="DateOfBirth" min="1900-01-01" value="@DateTime.Now.ToString("1900-01-01")" />
             </div>
         </div>
 
@@ -47,7 +47,7 @@
             <div>
                 @foreach (KeyValuePair<string, string> gender in ViewBag.Genders)
                 {
-                    <input type="radio" id="@gender.Key" name="Gender" value="@gender.Key" />
+                    <input type="radio" id="@gender.Key" name="Gender" value="@gender.Key" @(gender.Value == "Other" ? "checked" : "") />
                     <label for="@gender.Key">@gender.Value</label>
                 }
             </div>
@@ -60,6 +60,7 @@
             </label>
             <div>
                 <select name="CountryId" id="CountryId">
+                    <option value="">-- Select your country --</option>
                     @foreach (CountryResponse country in ViewBag.Countries)
                     {    
                         <option value="@country.CountryId">@country.CountryName</option>
@@ -68,6 +69,43 @@
             </div>
         </div>
 
-        <button type="submit">Create</button>
+        @* Address field *@
+        <div>
+            <label for="Address">
+                Address
+            </label>
+            <div>
+                <textarea type="text" id="Address" name="Address"></textarea>
+            </div>
+        </div>
+
+        @* IsReceivingNewsLetters field *@
+        <div>
+            <div>
+                <input type="checkbox" id="IsReceivingNewsLetters" name="IsReceivingNewsLetters" checked value="true"/>
+            </div>
+            <label for="IsReceivingNewsLetters">
+                Subscribe to Newsletter?
+            </label>
+        </div>
+
+        <span>* This field is required.</span>
+
+        <div>
+            <button type="submit">Create</button>
+        </div>
+
     </form>
+
+    @if(ViewBag.Errors != null)
+    {
+        <div>
+            <ul>
+            @foreach (string error in ViewBag.Errors)
+            {
+                <li>@error</li>
+            }
+            </ul>
+        </div>
+    }
 </section>
