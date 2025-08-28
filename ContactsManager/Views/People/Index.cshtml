@@ -76,3 +76,12 @@
         </table>
     </div>
 </form>
+
+@if (ViewBag.NewUser != null)
+{
+    @section Scripts {
+        <script>
+            toastr.success('@ViewBag.NewUser')
+        </script>
+    }
+}

@@ -35,6 +35,7 @@ namespace ContactsManager.Controllers
 
             ViewBag.CurrentSortBy = sortBy;
             ViewBag.CurrentSortOrder = sortOrderOptions;
+            ViewBag.NewUser = TempData["NewUser"];
 
             return View(allPeople);
         }
@@ -70,6 +71,7 @@ namespace ContactsManager.Controllers
                 return View();
             }
             _peopleService.AddPerson(personAddRequest);
+            TempData["NewUser"] = $"{personAddRequest?.PersonName ?? "New person"} has been succesfully added.";
             return RedirectToAction("Index", "People");
         }
 
