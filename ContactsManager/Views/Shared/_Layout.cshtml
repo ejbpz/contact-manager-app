@@ -7,9 +7,7 @@
     <link rel="stylesheet" href="~/css/input.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <link rel="stylesheet" href="~/css/styles.css"/>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
 <body class="font-poppins flex w-full bg-[#f2f2f2] not-sm:flex-col">
     <div class="fixed z-20 min-h-10 w-full bg-[#373A4D] text-white sm:h-[100vh] sm:w-[20%]">
@@ -34,6 +32,9 @@
         @RenderBody()
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/toastr-behavior.js"></script>
     @RenderSection("Scripts", false)
 </body>
 </html>
