@@ -18,7 +18,7 @@
                     * First name
                 </label>
                 <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
-                    <input type="text" id="PersonName" name="PersonName" placeholder="Jhon" class="absolute w-full focus:outline-none"/>
+                    <input type="text" id="PersonName" name="PersonName" placeholder="Jhon" class="absolute w-full focus:outline-none" value="@ViewBag.PersonRequest?.PersonName"/>
                 </div>
             </div>
 
@@ -28,7 +28,7 @@
                     * Your email
                 </label>
                 <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
-                    <input type="text" id="PersonEmail" name="PersonEmail" placeholder="email@example.com" class="absolute w-full focus:outline-none"/>
+                    <input type="text" id="PersonEmail" name="PersonEmail" placeholder="email@example.com" class="absolute w-full focus:outline-none" value="@ViewBag.PersonRequest?.PersonEmail"/>
                 </div>
             </div>
 
@@ -38,7 +38,7 @@
                     Date Of birth
                 </label>
                 <div>
-                    <input type="date" id="DateOfBirth" name="DateOfBirth" min="1900-01-01" value="@DateTime.Now.ToString("2000-01-01")" class="block w-full rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 text-sm outline-none not-sm:min-w-50" />
+                    <input type="date" id="DateOfBirth" name="DateOfBirth" min="1900-01-01" class="block w-full rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 text-sm outline-none not-sm:min-w-50" value="@DateTime.Now.ToString("2000-01-01")" />
                 </div>
             </div>
 
@@ -79,7 +79,7 @@
                     Address
                 </label>
                 <div class="relative flex min-h-20 min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-2">
-                    <textarea type="text" id="Address" name="Address" class="absolute h-full w-full resize-none py-2 focus:outline-none"></textarea>
+                    <textarea type="text" id="Address" name="Address" class="absolute h-full w-full resize-none py-2 focus:outline-none">@ViewBag.PersonRequest?.Address</textarea>
                 </div>
             </div>
 

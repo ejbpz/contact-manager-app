@@ -62,8 +62,10 @@ namespace ContactsManager.Controllers
 
                 ViewBag.Errors = ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 
-                if(purpose is null) purpose = "Add";
+                if (purpose is null) purpose = "Add";
                 ViewBag.Purpose = purpose;
+
+                if (personAddRequest is not null) ViewData["PersonRequest"] = personAddRequest;
 
                 return View();
             }
