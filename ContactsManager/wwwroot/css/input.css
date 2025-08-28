@@ -16,6 +16,14 @@
     background: #43A490;
 }
 
+.menu-options-selected {
+    background: #434659;
+}
+
+.menu-options-selected > div {
+    background: #43A490;
+}
+
 input[type="search"]::-webkit-search-decoration,
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,

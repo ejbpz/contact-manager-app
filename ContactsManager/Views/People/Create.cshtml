@@ -10,11 +10,11 @@
         <h2 class="font-quicksand text-xl font-bold not-[370px]:text-lg">@(ViewBag.Purpose == "Add" ? "Create new" : ViewBag.Purpose) person</h2>
     </div>
 
-    <section class="mt-4">
+    <section class="mt-4 text-sm">
         <form action="~/people/new-person" method="post" class="flex flex-col gap-5">
             @* PersonName field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label for="PersonName" class="text-sm font-semibold text-error">
+                <label for="PersonName" class="font-semibold text-error">
                     * First name
                 </label>
                 <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
@@ -24,7 +24,7 @@
 
             @* PersonEmail field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label for="PersonEmail" class="text-sm font-semibold text-error">
+                <label for="PersonEmail" class="font-semibold text-error">
                     * Your email
                 </label>
                 <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
@@ -34,17 +34,17 @@
 
             @* DateOfBirth field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label for="DateOfBirth" class="text-sm font-semibold">
+                <label for="DateOfBirth" class="font-semibold">
                     Date Of birth
                 </label>
                 <div>
-                    <input type="date" id="DateOfBirth" name="DateOfBirth" min="1900-01-01" class="block w-full rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 text-sm outline-none not-sm:min-w-50" value="@DateTime.Now.ToString("2000-01-01")" />
+                    <input type="date" id="DateOfBirth" name="DateOfBirth" min="1900-01-01" class="block w-full rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 outline-none not-sm:min-w-50" value="@DateTime.Now.ToString("2000-01-01")" />
                 </div>
             </div>
 
             @* Gender field *@
             <div class="flex flex-col items-center justify-center rounded-xl bg-white p-4 text-center shadow-lg">
-                <label for="Gender" class="text-sm font-semibold">
+                <label for="Gender" class="font-semibold">
                     Choose your gender
                 </label>
                 <div class="flex gap-5">
@@ -60,11 +60,11 @@
 
             @* Country field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label for="CountryId" class="text-sm font-semibold">
+                <label for="CountryId" class="font-semibold">
                     Country
                 </label>
                 <div>
-                    <select name="CountryId" id="CountryId" class="block w-full rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 text-sm outline-none not-sm:min-w-50">
+                    <select name="CountryId" id="CountryId" class="block w-full rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 outline-none not-sm:min-w-50">
                         @foreach (CountryResponse country in ViewBag.Countries)
                         {
                             <option value="@country.CountryId">@country.CountryName</option>
@@ -75,7 +75,7 @@
 
             @* Address field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label for="Address" class="text-sm font-semibold">
+                <label for="Address" class="font-semibold">
                     Address
                 </label>
                 <div class="relative flex min-h-20 min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-2">
@@ -93,7 +93,7 @@
                 </label>
             </div>
 
-            <div class="block w-20 cursor-pointer rounded-sm border-[1px] border-[#43A490] px-2 py-1 font-medium text-[#43A490] not-[370px]:text-sm hover:bg-[#43A490] hover:text-white">
+            <div class="block w-20 cursor-pointer rounded-sm border-[1px] border-[#43A490] bg-[#43A490] px-1 py-[5.3px] font-medium text-white">
                 <button type="submit" class="h-full w-full cursor-pointer">Create</button>
             </div>
         </form>

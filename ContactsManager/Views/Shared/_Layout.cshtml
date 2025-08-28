@@ -11,18 +11,49 @@
 </head>
 <body class="font-poppins flex w-full bg-[#f2f2f2] not-sm:flex-col">
     <div class="fixed z-20 min-h-10 w-full bg-[#373A4D] text-white sm:h-[100vh] sm:w-[20%]">
-        <nav class="flex h-full w-full flex-col items-center">
-            <a href="~/people" class="flex h-fit w-full items-center gap-2 py-5 not-sm:px-3 sm:flex-col sm:justify-center">
+        <nav class="flex h-full w-full items-center not-sm:relative not-sm:justify-between not-sm:px-3 sm:flex-col">
+            <a href="~/people" class="flex h-fit items-center gap-2 py-5 sm:flex-col sm:justify-center">
                 <figure class="max-h-10 max-w-10 sm:max-h-16 sm:max-w-16">
                     <img src="~/icon/contacts-manager-icon.svg" alt="Contacts Manager Logo" class="h-full w-full"/>
                 </figure>
                 <h1 class="font-quicksand text-center text-2xl font-bold not-[370px]:text-lg">Contacts Manager</h1>
             </a>
+
+            @* Menu mobile *@
+            <button class="sm:hidden" id="buttonMenu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="absolute top-[76px] left-0 hidden h-fit w-full rounded-b-xl bg-[#373A4D] pb-4 shadow-lg sm:hidden" id="menuItems">
+                <ul class="flex w-full flex-col items-center text-center">
+                    <a href="~/people" class="w-full py-3">
+                        <li>
+                            People
+                        </li> 
+                    </a>
+                    <a href="~/people/new-person" class="w-full py-3">
+                        <li>
+                            New person
+                        </li>
+                    </a>
+                </ul>
+            </div>
+            
+            @* Menu desktop *@
             <div class="h-[1px] w-full border-b-[1px] border-b-[#f2f2f11a] not-sm:hidden"></div>
             <ul class="w-full not-sm:hidden">
-                <a href="~/people" class="menu-options relative flex h-20 w-full cursor-pointer items-center text-center hover:bg-[#434659]">
+                <a href="~/people" class="menu-options options relative flex h-20 w-full cursor-pointer items-center text-center hover:bg-[#434659]">
                     <div class="absolute left-0 h-full w-1"></div>
-                    <li class="w-full">People</li>
+                    <li class="w-full">
+                        <i class="fa-solid fa-users mr-1"></i>
+                        People
+                    </li>
+                </a>
+                <a href="~/people/new-person" class="menu-options options relative flex h-20 w-full cursor-pointer items-center text-center hover:bg-[#434659]">
+                    <div class="absolute left-0 h-full w-1"></div>
+                    <li class="w-full">
+                        <i class="fa-solid fa-user-plus mr-1"></i>
+                        New person
+                    </li>
                 </a>
             </ul>
         </nav>
@@ -35,6 +66,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="~/js/toastr-behavior.js"></script>
+    <script src="~/js/navbar.js"></script>
     @RenderSection("Scripts", false)
 </body>
 </html>
