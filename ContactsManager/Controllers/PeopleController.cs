@@ -2,7 +2,6 @@
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace ContactsManager.Controllers
 {
@@ -41,17 +40,20 @@ namespace ContactsManager.Controllers
         }
 
         [HttpGet("new-person")]
-        public IActionResult Create()
+        public IActionResult Create(string? purpose)
         {
             CallingGenders();
             CallingCountries();
+
+            if (purpose is null) purpose = "Add";
+            ViewBag.Purpose = purpose;
 
             return View();
         }
 
         //<form action = "~/people/new-person" method="post">
         [HttpPost("new-person")]
-        public IActionResult Create(PersonAddRequest? personAddRequest)
+        public IActionResult Create(PersonAddRequest? personAddRequest, string? purpose)
         {
             if(!ModelState.IsValid)
             {
@@ -59,6 +61,9 @@ namespace ContactsManager.Controllers
                 CallingCountries();
 
                 ViewBag.Errors = ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
+
+                if(purpose is null) purpose = "Add";
+                ViewBag.Purpose = purpose;
 
                 return View();
             }

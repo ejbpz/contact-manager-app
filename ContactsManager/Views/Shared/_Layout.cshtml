@@ -14,12 +14,12 @@
 <body class="font-poppins flex w-full bg-[#f2f2f2] not-sm:flex-col">
     <div class="fixed z-20 min-h-10 w-full bg-[#373A4D] text-white sm:h-[100vh] sm:w-[20%]">
         <nav class="flex h-full w-full flex-col items-center">
-            <div class="flex h-fit w-full items-center gap-2 py-5 not-sm:px-3 sm:flex-col sm:justify-center">
+            <a href="~/people" class="flex h-fit w-full items-center gap-2 py-5 not-sm:px-3 sm:flex-col sm:justify-center">
                 <figure class="max-h-10 max-w-10 sm:max-h-16 sm:max-w-16">
                     <img src="~/icon/contacts-manager-icon.svg" alt="Contacts Manager Logo" class="h-full w-full"/>
                 </figure>
                 <h1 class="font-quicksand text-center text-2xl font-bold not-[370px]:text-lg">Contacts Manager</h1>
-            </div>
+            </a>
             <div class="h-[1px] w-full border-b-[1px] border-b-[#f2f2f11a] not-sm:hidden"></div>
             <ul class="w-full not-sm:hidden">
                 <a href="~/people" class="menu-options relative flex h-20 w-full cursor-pointer items-center text-center hover:bg-[#434659]">
@@ -30,7 +30,7 @@
         </nav>
     </div>
 
-    <div class="min-h-[100vh] w-full overflow-x-hidden overflow-y-auto p-10 not-sm:mt-20 sm:ml-[20%] sm:w-[80%]">
+    <div class="w-full overflow-x-hidden overflow-y-auto p-10 not-sm:mt-20 sm:ml-[20%] sm:w-[80%]">
         @RenderBody()
     </div>
 

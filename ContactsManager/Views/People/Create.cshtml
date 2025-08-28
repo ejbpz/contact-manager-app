@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "New Person";
+    ViewBag.Title = $"{ViewBag.Purpose} Person";
 }
 
 <section class="container mx-auto max-w-96 sm:max-w-[600px]">
@@ -7,7 +7,7 @@
         <a href="~/people/" class="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-200">
             <i class="fa-solid fa-angle-left"></i>
         </a>
-        <h2 class="font-quicksand text-xl font-bold not-[370px]:text-lg">Create new person</h2>
+        <h2 class="font-quicksand text-xl font-bold not-[370px]:text-lg">@(ViewBag.Purpose == "Add" ? "Create new" : ViewBag.Purpose) person</h2>
     </div>
 
     <section class="mt-4">
