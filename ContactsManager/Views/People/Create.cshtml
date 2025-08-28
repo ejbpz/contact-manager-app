@@ -11,9 +11,9 @@
     </div>
 
     <section class="mt-4">
-        <form action="~/people/new-person" method="post" class="flex flex-col gap-10">
+        <form action="~/people/new-person" method="post" class="flex flex-col gap-5">
             @* PersonName field *@
-            <div>
+            <div class="rounded-xl bg-white p-4 shadow-lg">
                 <label for="PersonName" class="text-sm font-semibold text-error">
                     * First name
                 </label>
@@ -23,7 +23,7 @@
             </div>
 
             @* PersonEmail field *@
-            <div>
+            <div class="rounded-xl bg-white p-4 shadow-lg">
                 <label for="PersonEmail" class="text-sm font-semibold text-error">
                     * Your email
                 </label>
@@ -33,7 +33,7 @@
             </div>
 
             @* DateOfBirth field *@
-            <div>
+            <div class="rounded-xl bg-white p-4 shadow-lg">
                 <label for="DateOfBirth" class="text-sm font-semibold">
                     Date Of birth
                 </label>
@@ -43,7 +43,7 @@
             </div>
 
             @* Gender field *@
-            <div class="flex flex-col items-center justify-center text-center">
+            <div class="flex flex-col items-center justify-center rounded-xl bg-white p-4 text-center shadow-lg">
                 <label for="Gender" class="text-sm font-semibold">
                     Choose your gender
                 </label>
@@ -59,7 +59,7 @@
             </div>
 
             @* Country field *@
-            <div>
+            <div class="rounded-xl bg-white p-4 shadow-lg">
                 <label for="CountryId" class="text-sm font-semibold">
                     Country
                 </label>
@@ -74,7 +74,7 @@
             </div>
 
             @* Address field *@
-            <div>
+            <div class="rounded-xl bg-white p-4 shadow-lg">
                 <label for="Address" class="text-sm font-semibold">
                     Address
                 </label>
@@ -84,7 +84,7 @@
             </div>
 
             @* IsReceivingNewsLetters field *@
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 rounded-xl bg-white p-4 shadow-lg">
                 <div>
                     <input type="checkbox" id="IsReceivingNewsLetters" name="IsReceivingNewsLetters" checked value="true" />
                 </div>
