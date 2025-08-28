@@ -4,66 +4,75 @@
     ViewBag.Title = "People";
 }
 
-<h1>People</h1>
-<a href="~/people/new-person">New person</a>
+<div class="mb-10 flex h-10 items-center gap-5 not-sm:justify-center">
+    <h1 class="font-quicksand text-xl font-bold not-[370px]:text-lg">List of people</h1>
+    <a href="~/people/new-person" class="block rounded-sm border-[1px] border-[#43A490] px-2 py-1 font-medium text-[#43A490] not-[370px]:text-sm hover:bg-[#43A490] hover:text-white">Add person</a>
+</div>
 
-<form action="~/people" method="get">
-    <div>
+<form action="~/people" method="get" class="w-full">
+    <div class="mb-5 flex min-h-12 w-full flex-wrap items-center justify-center gap-3 rounded-xl bg-white px-2 py-3 shadow-lg">
         <div>
-            <select name="searchBy">
+            <select name="searchBy" class="block rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 text-sm outline-none not-sm:min-w-50">
                 @foreach (KeyValuePair<string, string> option in ViewBag.SearchFields)
                 {
                     <option @(option.Key == ViewBag.CurrentSearchBy ? "selected" : "")
-                        value="@option.Key">@option.Value
+                            value="@option.Key">
+                        @option.Value
                     </option>
                 }
             </select>
         </div>
-
-        <div>
-            <input type="search" id="SearchPeople" placeholder="Search people" name="searchQuery" value="@ViewBag.CurrentSearchQuery"/>
-            <a href="~/people">X</a>
+        
+        <div class="flex h-full items-center text-sm">
+            <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
+                <input type="search" id="SearchPeople" placeholder="Search people" name="searchQuery" value="@ViewBag.CurrentSearchQuery" class="absolute w-full focus:outline-none"/>
+                <a href="~/people" class="absolute right-1 font-semibold">
+                    <i class="fa-solid fa-xmark"></i>
+                </a>
+            </div>
         </div>
 
-        <div>
-            <button type="submit">Search</button>
+        <div class="block cursor-pointer rounded-sm border-[1px] border-[#43A490] bg-[#43A490] px-1 py-[5.3px] text-sm font-medium text-white">
+            <button class="cursor-pointer" type="submit">Search</button>
         </div>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.PersonName) }, { "HeaderName", "Name" } })
+    <div class="mt-3 flex max-h-[500px] w-full justify-around overflow-auto rounded-xl bg-white p-4 shadow-lg sm:max-h-[650px]">
+        <table class="w-full max-w-1/2 min-w-[980px]">
+            <thead>
+                <tr class="border-[#43A490] border-b-[1px]">
+                    @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.PersonName) }, { "HeaderName", "Name" } })
 
-                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.Age) }, { "HeaderName", "Age" } })
+                    @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.Age) }, { "HeaderName", "Age" } })
 
-                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.Gender) }, { "HeaderName", "Gender" } })
+                    @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.Gender) }, { "HeaderName", "Gender" } })
                 
-                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.PersonEmail) }, { "HeaderName", "Email" } })
+                    @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.PersonEmail) }, { "HeaderName", "Email" } })
                 
-                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.DateOfBirth) }, { "HeaderName", "Date Of Birth" } })
+                    @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.DateOfBirth) }, { "HeaderName", "Date Of Birth" } })
                 
-                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.CountryName) }, { "HeaderName", "Country" } })
+                    @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.CountryName) }, { "HeaderName", "Country" } })
                 
-                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.Address) }, { "HeaderName", "Address" } })
+                    @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.Address) }, { "HeaderName", "Address" } })
                 
-                @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.IsReceivingNewsLetters) }, { "HeaderName", "Receive Newsletter" } })
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (PersonResponse person in Model)
-            {
-               <tr style="width: 100vw;">
-                    <td style="width:5%;">@person.PersonName</td>
-                    <td style="width:3%;">@person.Age</td>
-                    <td style="width:6%;">@person.Gender</td>
-                    <td style="width:13%;">@person.PersonEmail</td>
-                    <td style="width:10%;">@person.DateOfBirth?.ToString("dd/MM/yyyy")</td>
-                    <td style="width:7%;">@person.CountryName</td>
-                    <td style="width:14%;">@person.Address</td>
-                    <td style="width:3%;">@(person.IsReceivingNewsLetters ? "Yes" : "No")</td>
-               </tr> 
-            }
-        </tbody>
-    </table>
+                    @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.IsReceivingNewsLetters) }, { "HeaderName", "Newsletter" } })
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (PersonResponse person in Model)
+                {
+                   <tr class="text-md w-full text-center">
+                        <td class="p-3">@person.PersonName</td>
+                        <td class="p-3">@person.Age</td>
+                        <td class="p-3">@person.Gender</td>
+                        <td class="p-3">@person.PersonEmail</td>
+                        <td class="p-3">@person.DateOfBirth?.ToString("dd/MM/yyyy")</td>
+                        <td class="p-3">@person.CountryName</td>
+                        <td class="p-3">@person.Address</td>
+                        <td class="p-3">@(person.IsReceivingNewsLetters ? "Yes" : "No")</td>
+                   </tr> 
+                }
+            </tbody>
+        </table>
+    </div>
 </form>
