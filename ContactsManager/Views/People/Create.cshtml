@@ -1,58 +1,62 @@
-﻿@{
+﻿@model PersonAddRequest
+
+@{
     ViewBag.Title = $"{ViewBag.Purpose} Person";
 }
 
 <section class="container mx-auto max-w-96 sm:max-w-[600px]">
     <div class="flex items-center gap-2">
-        <a href="~/people/" class="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-200">
+        <a asp-action="Index" asp-controller="People" class="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-200">
             <i class="fa-solid fa-angle-left"></i>
         </a>
         <h2 class="font-quicksand text-xl font-bold not-[370px]:text-lg">@(ViewBag.Purpose == "Add" ? "Create new" : ViewBag.Purpose) person</h2>
     </div>
 
     <section class="mt-4 text-sm">
-        <form action="~/people/new-person" method="post" class="flex flex-col gap-5">
+        <form asp-action="Create" asp-controller="People" method="post" class="flex flex-col gap-5">
             @* PersonName field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label for="PersonName" class="font-semibold text-error">
+                <label asp-for="PersonName" class="text-error font-semibold">
                     * First name
                 </label>
                 <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
-                    <input type="text" id="PersonName" name="PersonName" placeholder="Jhon" class="absolute w-full focus:outline-none" value="@ViewBag.PersonRequest?.PersonName"/>
+                    <input asp-for="PersonName" placeholder="Jhon" class="absolute w-full focus:outline-none" value="@ViewBag.PersonRequest?.PersonName"/>
+                    <span asp-validation-for="PersonName" class="errors hidden"></span>
                 </div>
             </div>
 
             @* PersonEmail field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label for="PersonEmail" class="font-semibold text-error">
+                <label asp-for="PersonEmail" class="text-error font-semibold">
                     * Your email
                 </label>
                 <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
-                    <input type="text" id="PersonEmail" name="PersonEmail" placeholder="email@example.com" class="absolute w-full focus:outline-none" value="@ViewBag.PersonRequest?.PersonEmail"/>
+                    <input asp-for="PersonEmail" placeholder="email@example.com" class="absolute w-full focus:outline-none" value="@ViewBag.PersonRequest?.PersonEmail"/>
+                    <span asp-validation-for="PersonEmail" class="errors hidden"></span>
                 </div>
             </div>
 
             @* DateOfBirth field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label for="DateOfBirth" class="font-semibold">
+                <label asp-for="DateOfBirth" class="font-semibold">
                     Date Of birth
                 </label>
                 <div>
-                    <input type="date" id="DateOfBirth" name="DateOfBirth" min="1900-01-01" class="block w-full rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 outline-none not-sm:min-w-50" value="@DateTime.Now.ToString("2000-01-01")" />
+                    <input asp-for="DateOfBirth" min="1900-01-01" class="block w-full rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 outline-none not-sm:min-w-50" value="@DateTime.Now.ToString("2000-01-01")" />
                 </div>
             </div>
 
             @* Gender field *@
             <div class="flex flex-col items-center justify-center rounded-xl bg-white p-4 text-center shadow-lg">
-                <label for="Gender" class="font-semibold">
+                <label asp-for="Gender" class="font-semibold">
                     Choose your gender
                 </label>
                 <div class="flex gap-5">
                     @foreach (KeyValuePair<string, string> gender in ViewBag.Genders)
                     {
                         <div>
-                            <input type="radio" id="@gender.Key" name="Gender" value="@gender.Key" @(gender.Value == "Other" ? "checked" : "") />
-                            <label for="@gender.Key">@gender.Value</label>
+                            <input type="radio" id="@gender.Key" asp-for="Gender" value="@gender.Key" checked="@(gender.Value == "Other")"/>
+                            <label asp-for="@gender.Key">@gender.Value</label>
                         </div>
                     }
                 </div>
@@ -60,51 +64,57 @@
 
             @* Country field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label for="CountryId" class="font-semibold">
+                <label asp-for="CountryId" class="font-semibold">
                     Country
                 </label>
                 <div>
-                    <select name="CountryId" id="CountryId" class="block w-full rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 outline-none not-sm:min-w-50">
-                        @foreach (CountryResponse country in ViewBag.Countries)
-                        {
-                            <option value="@country.CountryId">@country.CountryName</option>
-                        }
+                    <select asp-for="CountryId" asp-items="ViewBag.Countries" class="block w-full rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 outline-none not-sm:min-w-50">
                     </select>
                 </div>
             </div>
 
             @* Address field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label for="Address" class="font-semibold">
+                <label asp-for="Address" class="font-semibold">
                     Address
                 </label>
                 <div class="relative flex min-h-20 min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-2">
-                    <textarea type="text" id="Address" name="Address" class="absolute h-full w-full resize-none py-2 focus:outline-none">@ViewBag.PersonRequest?.Address</textarea>
+                    <textarea asp-for="Address" class="absolute h-full w-full resize-none py-2 focus:outline-none">@ViewBag.PersonRequest?.Address</textarea>
                 </div>
             </div>
 
             @* IsReceivingNewsLetters field *@
             <div class="flex items-center gap-2 rounded-xl bg-white p-4 shadow-lg">
                 <div>
-                    <input type="checkbox" id="IsReceivingNewsLetters" name="IsReceivingNewsLetters" checked value="true" />
+                    <input asp-for="IsReceivingNewsLetters" type="checkbox" checked value="true"/>
                 </div>
-                <label for="IsReceivingNewsLetters">
+                <label asp-for="IsReceivingNewsLetters">
                     Subscribe to Newsletter?
                 </label>
             </div>
 
             <div class="block w-20 cursor-pointer rounded-sm border-[1px] border-[#43A490] bg-[#43A490] px-1 py-[5.3px] font-medium text-white">
-                <button type="submit" class="h-full w-full cursor-pointer">Create</button>
+                <button type="submit" id="buttonSubmit" class="h-full w-full cursor-pointer">Create</button>
             </div>
         </form>
 
-        @if (ViewBag.Errors != null)
-        {
-            @section Scripts {
-                <script>
-                    toastr.error('@ViewBag.Errors[0]')
-                </script>
-            }
+        @section Scripts {
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" asp-fallback-test="window.jQuery" asp-fallback-src="~/jquery/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.4/jquery.validate.min.js" asp-fallback-test="window.jQuery.validator" asp-fallback-src="~/jquery/jquery.validate.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js" asp-fallback-test="window.jQuery.validator.unobtrusive" asp-fallback-src="~/jquery/jquery.validate.unobtrusive.min.js"></script>
+
+            <script>
+                document.querySelector('#buttonSubmit').addEventListener('click', () => {
+                    let errors = document.querySelectorAll('.errors');
+
+
+                    for(let i = 0; i < errors.length; i++) {
+                        if(errors[i].firstChild?.textContent) {
+                            toastr.error(errors[i].firstChild.textContent)
+                        }
+                    }
+                });
+            </script>
         }
     </section>
 </section>

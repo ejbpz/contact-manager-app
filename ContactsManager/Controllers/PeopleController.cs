@@ -1,7 +1,8 @@
-﻿using ContactsManager.ServiceContracts;
+﻿using Microsoft.AspNetCore.Mvc;
+using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ContactsManager.Controllers
 {
@@ -49,6 +50,7 @@ namespace ContactsManager.Controllers
             if (purpose is null) purpose = "Add";
             ViewBag.Purpose = purpose;
 
+
             return View();
         }
 
@@ -60,8 +62,6 @@ namespace ContactsManager.Controllers
             {
                 CallingGenders();
                 CallingCountries();
-
-                ViewBag.Errors = ModelState.Values.SelectMany(p => p.Errors).Select(e => e.ErrorMessage).ToList();
 
                 if (purpose is null) purpose = "Add";
                 ViewBag.Purpose = purpose;
@@ -87,7 +87,7 @@ namespace ContactsManager.Controllers
 
         private void CallingCountries()
         {
-            ViewData["Countries"] = _countriesService.GetCountries();
+            ViewData["Countries"] = _countriesService.GetCountries().Select(c => new SelectListItem() { Text = c.CountryName, Value = c.CountryId.ToString() });
         }
     
         private void CreateColumns()
