@@ -23,7 +23,7 @@
             <button class="sm:hidden" id="buttonMenu">
                 <i class="fa-solid fa-bars"></i>
             </button>
-            <div class="absolute top-[76px] left-0 hidden h-fit w-full rounded-b-xl bg-[#373A4D] pb-4 shadow-lg sm:hidden" id="menuItems">
+            <div class="absolute top-[76px] left-0 z-[60] hidden h-fit w-full rounded-b-xl bg-[#373A4D] pb-4 shadow-lg sm:hidden" id="menuItems">
                 <ul class="flex w-full flex-col items-center text-center">
                     <a href="~/people" class="w-full py-3">
                         <li>
@@ -59,7 +59,8 @@
         </nav>
     </div>
 
-    <div class="w-full overflow-x-hidden overflow-y-auto p-10 not-sm:mt-20 sm:ml-[20%] sm:w-[80%]">
+    <div class="relative w-full overflow-x-hidden overflow-y-auto p-10 not-sm:mt-20 sm:ml-[20%] sm:w-[80%]">
+        <div id="deleteModal" class="absolute top-0 left-0 z-50 hidden h-full w-full"></div>
         @RenderBody()
     </div>
 
@@ -67,6 +68,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="~/js/toastr-behavior.js"></script>
     <script src="~/js/navbar.js"></script>
+    <script src="~/js/modal.js"></script>
     @RenderSection("Scripts", false)
 </body>
 </html>

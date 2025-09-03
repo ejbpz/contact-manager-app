@@ -1,0 +1,11 @@
+﻿@model PersonResponse?
+
+<section class="flex h-full w-full items-center justify-center bg-[#00000055]">
+    <div class="mx-6 flex h-[200px] flex-col items-center justify-evenly rounded-xl bg-white px-7 py-3 shadow-lg">
+        <p>Are you sure about deleting @Model?.PersonName?</p>
+        <form asp-action="DeleteUser" asp-route-personId="@Model?.PersonId" asp-controller="People" method="post" class="flex w-full justify-around text-white">
+            <button type="button" id="closeModal" class="cursor-pointer rounded-lg bg-error px-3 py-2">Cancel</button>
+            <button type="submit" class="cursor-pointer rounded-lg bg-[#43A490] px-3 py-2">Accept</button>
+        </form>
+    </div>
+</section>

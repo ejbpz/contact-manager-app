@@ -37,6 +37,7 @@ namespace ContactsManager.Controllers
             ViewBag.CurrentSortBy = sortBy;
             ViewBag.CurrentSortOrder = sortOrderOptions;
             ViewBag.NewUser = TempData["NewUser"];
+            ViewBag.ErrorDelete = TempData["ErrorDelete"];
 
             return View(allPeople);
         }
@@ -99,10 +100,29 @@ namespace ContactsManager.Controllers
             return View(personUpdateRequest);
         }
 
-        [HttpGet("delete-person/{personId}")]
-        public IActionResult Delete(Guid? personId)
+        [HttpGet("delete-view/{personId}")]
+        public IActionResult DeleteView(Guid? personId)
         {
-            return PartialView("Delete");
+            PersonResponse? personResponse = _peopleService.GetPersonByPersonId(personId);
+            return PartialView("_Delete", personResponse);
+        }
+
+        [HttpPost("delete-person/{personId}")]
+        public IActionResult DeleteUser(Guid? personId)
+        {
+            PersonResponse? personResponse = _peopleService.GetPersonByPersonId(personId);
+            bool wasDeleted = _peopleService.DeletePerson(personResponse?.PersonId);
+
+            if(wasDeleted)
+            {
+                TempData["NewUser"] = $"{personResponse?.PersonName ?? "User"} was successfully deleted.";
+            } 
+            else
+            {
+                TempData["ErrorDelete"] = "Ocurrs an error while deleting.";
+            }
+        
+            return RedirectToAction("Index", "People");
         }
 
         private void CallingGenders()

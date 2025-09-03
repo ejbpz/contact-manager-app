@@ -75,7 +75,7 @@
                             <a asp-controller="People" asp-action="Edit" asp-route-personId="@person.PersonId">
                                 <i class="fa-solid fa-user-pen"></i>
                             </a>
-                            <a asp-action="Delete" asp-controller="People" asp-route-personId="@person.PersonId">
+                            <a id="deleteButton" data-id="@person.PersonId" class="cursor-pointer">
                                 <i class="fa-solid fa-user-slash"></i>
                             </a>
                         </td>
@@ -86,11 +86,18 @@
     </div>
 </form>
 
-@if (ViewBag.NewUser != null)
-{
-    @section Scripts {
+@section Scripts {
+    @if (ViewBag.NewUser != null)
+    {
         <script>
             toastr.success('@ViewBag.NewUser')
+        </script>
+    }
+
+    @if (ViewBag.ErrorDelete != null)
+    {
+        <script>
+            toastr.error('@ViewBag.ErrorDelete')
         </script>
     }
 }
