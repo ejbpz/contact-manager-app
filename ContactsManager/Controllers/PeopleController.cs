@@ -60,8 +60,6 @@ namespace ContactsManager.Controllers
                 CallingGenders();
                 CallingCountries();
 
-                if (personAddRequest is not null) ViewData["PersonRequest"] = personAddRequest;
-
                 return View();
             }
             _peopleService.AddPerson(personAddRequest);
