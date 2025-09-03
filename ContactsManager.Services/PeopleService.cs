@@ -275,7 +275,7 @@ namespace ContactsManager.Services
 
             Person? personToUpdate = _peopleList.FirstOrDefault(p => p.PersonId == personUpdateRequest.PersonId);
 
-            if (personToUpdate is null) throw new ArgumentException("Give person Id doesn't exist.");
+            if (personToUpdate is null) throw new ArgumentException("Given person Id doesn't exist.");
 
             personToUpdate.PersonName = personUpdateRequest.PersonName;
             personToUpdate.PersonEmail = personUpdateRequest.PersonEmail;

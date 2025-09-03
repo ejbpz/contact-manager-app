@@ -1,7 +1,7 @@
 ﻿@model PersonAddRequest
 
 @{
-    ViewBag.Title = $"{ViewBag.Purpose} Person";
+    ViewBag.Title = "Add Person";
 }
 
 <section class="container mx-auto max-w-96 sm:max-w-[600px]">
@@ -9,14 +9,14 @@
         <a asp-action="Index" asp-controller="People" class="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-200">
             <i class="fa-solid fa-angle-left"></i>
         </a>
-        <h2 class="font-quicksand text-xl font-bold not-[370px]:text-lg">@(ViewBag.Purpose == "Add" ? "Create new" : ViewBag.Purpose) person</h2>
+        <h2 class="font-quicksand text-xl font-bold not-[370px]:text-lg">Create new person</h2>
     </div>
 
     <section class="mt-4 text-sm">
         <form asp-action="Create" asp-controller="People" method="post" class="flex flex-col gap-5">
             @* PersonName field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label asp-for="PersonName" class="text-error font-semibold">
+                <label asp-for="PersonName" class="font-semibold">
                     * First name
                 </label>
                 <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
@@ -27,7 +27,7 @@
 
             @* PersonEmail field *@
             <div class="rounded-xl bg-white p-4 shadow-lg">
-                <label asp-for="PersonEmail" class="text-error font-semibold">
+                <label asp-for="PersonEmail" class="font-semibold">
                     * Your email
                 </label>
                 <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">

@@ -12,16 +12,23 @@ namespace ContactsManager.ServiceContracts.DTOs
         [Required(ErrorMessage = "The Person Id is required.")]
         public Guid PersonId { get; set; }
 
+        [DataType(DataType.Text)]
         [Required(ErrorMessage = "Person Name cannot be null.")]
         public string? PersonName { get; set; }
 
+        [DataType(DataType.Text)]
         [Required(ErrorMessage = "Email cannot be null.")]
         [RegularExpression("^[a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$", ErrorMessage = "This text doesn't match to an email.")]
         public string? PersonEmail { get; set; }
+
+        [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
         public GenderOptions? Gender { get; set; }
         public Guid? CountryId { get; set; }
+
+        [DataType(DataType.MultilineText)]
         public string? Address { get; set; }
+
         public bool IsReceivingNewsLetters { get; set; }
 
         /// <summary>

@@ -42,29 +42,22 @@ namespace ContactsManager.Controllers
         }
 
         [HttpGet("new-person")]
-        public IActionResult Create(string? purpose)
+        public IActionResult Create()
         {
             CallingGenders();
             CallingCountries();
-
-            if (purpose is null) purpose = "Add";
-            ViewBag.Purpose = purpose;
-
 
             return View();
         }
 
         //<form action = "~/people/new-person" method="post">
         [HttpPost("new-person")]
-        public IActionResult Create(PersonAddRequest? personAddRequest, string? purpose)
+        public IActionResult Create(PersonAddRequest? personAddRequest)
         {
             if(!ModelState.IsValid)
             {
                 CallingGenders();
                 CallingCountries();
-
-                if (purpose is null) purpose = "Add";
-                ViewBag.Purpose = purpose;
 
                 if (personAddRequest is not null) ViewData["PersonRequest"] = personAddRequest;
 
@@ -73,6 +66,43 @@ namespace ContactsManager.Controllers
             _peopleService.AddPerson(personAddRequest);
             TempData["NewUser"] = $"{personAddRequest?.PersonName ?? "New person"} has been succesfully added.";
             return RedirectToAction("Index", "People");
+        }
+
+        [HttpGet("edit-person/{personId}")]
+        public IActionResult Edit(Guid? personId)
+        {
+            CallingGenders();
+            CallingCountries();
+
+            PersonUpdateRequest? personUpdateRequest = _peopleService.GetPersonByPersonId(personId)?.ToPersonUpdateRequest();
+
+            return View(personUpdateRequest);
+        }
+
+        [HttpPost("edit-person")]
+        public IActionResult Edit(PersonUpdateRequest personUpdateRequest)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _peopleService.UpdatePerson(personUpdateRequest);
+                    TempData["NewUser"] = $"{personUpdateRequest?.PersonName ?? "Person"} has been succesfully updated.";
+                    return RedirectToAction("Index", "People");
+                }
+            }
+            catch (Exception) { }
+
+            CallingGenders();
+            CallingCountries();
+
+            return View(personUpdateRequest);
+        }
+
+        [HttpGet("delete-person/{personId}")]
+        public IActionResult Delete(Guid? personId)
+        {
+            return PartialView("Delete");
         }
 
         private void CallingGenders()

@@ -9,7 +9,7 @@
     <a asp-action="Create" asp-controller="People" class="block rounded-sm border-[1px] border-[#43A490] px-2 py-1 font-medium text-[#43A490] not-[370px]:text-sm hover:bg-[#43A490] hover:text-white">Add person</a>
 </div>
 
-<form asp-action="Index" asp-controller="People"  method="get" class="w-full">
+<form asp-action="Index" asp-controller="People" method="get" class="w-full">
     <div class="mb-5 flex min-h-12 w-full flex-wrap items-center justify-center gap-3 rounded-xl bg-white px-2 py-3 shadow-lg">
         <div>
             <select name="searchBy" class="block rounded-sm border-gray-200 border-[1px] bg-gray-200 p-1 text-sm outline-none not-sm:min-w-50">
@@ -55,6 +55,8 @@
                     @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.Address) }, { "HeaderName", "Address" } })
                 
                     @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.IsReceivingNewsLetters) }, { "HeaderName", "Newsletter" } })
+
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -69,6 +71,14 @@
                         <td class="p-3">@person.CountryName</td>
                         <td class="p-3">@person.Address</td>
                         <td class="p-3">@(person.IsReceivingNewsLetters ? "Yes" : "No")</td>
+                        <td class="flex h-[72px] items-center gap-2">
+                            <a asp-controller="People" asp-action="Edit" asp-route-personId="@person.PersonId">
+                                <i class="fa-solid fa-user-pen"></i>
+                            </a>
+                            <a asp-action="Delete" asp-controller="People" asp-route-personId="@person.PersonId">
+                                <i class="fa-solid fa-user-slash"></i>
+                            </a>
+                        </td>
                    </tr> 
                 }
             </tbody>
