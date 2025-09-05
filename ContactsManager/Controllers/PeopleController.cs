@@ -78,7 +78,7 @@ namespace ContactsManager.Controllers
             return View(personUpdateRequest);
         }
 
-        [HttpPost("edit-person")]
+        [HttpPost("edit-person/{personId}")]
         public IActionResult Edit(PersonUpdateRequest personUpdateRequest)
         {
             try
