@@ -3,7 +3,6 @@ using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services.Helpers;
-using Microsoft.EntityFrameworkCore;
 
 namespace ContactsManager.Services
 {
@@ -35,15 +34,14 @@ namespace ContactsManager.Services
             Person person = personAddRequest.ToPerson();
             person.PersonId = Guid.NewGuid();
 
-            _peopleDbContext.People.Add(person);
-            _peopleDbContext.SaveChanges();
+            _peopleDbContext.sp_AddPerson(person);
 
             return ConvertPersonToPersonResponse(person);
         }
 
         public List<PersonResponse> GetPeople()
         {
-            return _peopleDbContext.People.ToList().Select(p => ConvertPersonToPersonResponse(p)).ToList();
+            return _peopleDbContext.sp_GetPeople().Select(p => ConvertPersonToPersonResponse(p)).ToList();
         }
 
         public PersonResponse? GetPersonByPersonId(Guid? personId)

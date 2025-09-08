@@ -3,6 +3,7 @@ using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services;
+using Microsoft.EntityFrameworkCore;
 using System;
 using Xunit.Abstractions;
 
@@ -16,8 +17,12 @@ namespace ContactsManager.Test
 
         public PeopleServiceTest(ITestOutputHelper testOutputHelper)
         {
-            _peopleService = new PeopleService(false);
-            _countryService = new CountriesService(false);
+            _countryService = new CountriesService(new PeopleDbContext(
+                    new DbContextOptionsBuilder<PeopleDbContext>().Options
+                ));
+            _peopleService = new PeopleService(new PeopleDbContext(
+                    new DbContextOptionsBuilder<PeopleDbContext>().Options
+                ), _countryService);
             _testOutputHelper = testOutputHelper;
         }
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using System.Text.Json;
 
 namespace ContactsManager.Models
@@ -23,6 +25,27 @@ namespace ContactsManager.Models
 
             foreach (Country country in countries) modelBuilder.Entity<Country>().HasData(country);
             foreach (Person person in people) modelBuilder.Entity<Person>().HasData(person);
+        }
+
+        public List<Person> sp_GetPeople()
+        {
+            return People.FromSqlRaw("EXECUTE [dbo].[GetPeople]").ToList();
+        }
+
+        public void sp_AddPerson(Person person)
+        {
+            SqlParameter[] sqlParameters = new SqlParameter[]
+            {
+                new SqlParameter("@PersonId", person.PersonId),
+                new SqlParameter("@PersonName", person.PersonName is not null ? person.PersonName : DBNull.Value),
+                new SqlParameter("@PersonEmail", person.PersonEmail is not null ? person.PersonEmail : DBNull.Value),
+                new SqlParameter("@DateOfBirth", person.DateOfBirth is not null ? person.DateOfBirth : DBNull.Value),
+                new SqlParameter("@Gender", person.Gender is not null ? person.Gender : DBNull.Value),
+                new SqlParameter("@CountryId", person.CountryId is not null ? person.CountryId : DBNull.Value),
+                new SqlParameter("@Address", person.Address is not null ? person.Address : DBNull.Value),
+                new SqlParameter("@IsReceivingNewsLetters", person.IsReceivingNewsLetters)
+            };
+            Database.ExecuteSqlRaw("EXECUTE [dbo].[AddPerson] @PersonId, @PersonName, @PersonEmail, @DateOfBirth, @Gender, @CountryId, @Address, @IsReceivingNewsLetters", sqlParameters);
         }
 
         private List<Country> ExtractCountriesFormJson()
