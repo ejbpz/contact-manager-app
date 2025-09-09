@@ -58,5 +58,11 @@ namespace ContactsManager.ServiceContracts
         /// <param name="personId">Id to the person to be deleted.</param>
         /// <returns>Returns bool to know if was deleted.</returns>
         Task<bool> DeletePerson(Guid? personId);
+
+        /// <summary>
+        /// Returns people as CSV.
+        /// </summary>
+        /// <returns>Returns the memory stream with CSV data.</returns>
+        Task<MemoryStream> GetPeopleCSV();
     }
 }

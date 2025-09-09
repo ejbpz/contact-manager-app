@@ -3,6 +3,7 @@ using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Rotativa.AspNetCore;
 
 namespace ContactsManager.Controllers
 {
@@ -124,6 +125,26 @@ namespace ContactsManager.Controllers
         
             return RedirectToAction("Index", "People");
         }
+
+        [HttpGet("people-pdf")]
+        public async Task<IActionResult> PeoplePDF()
+        {
+            // Get People
+            List<PersonResponse>? people = await _peopleService.GetPeople();
+
+            // Return rotativa view
+            return new ViewAsPdf("PeoplePDF", people, ViewData)
+            {
+                PageMargins = new Rotativa.AspNetCore.Options.Margins()
+                {
+                    Top = 20,
+                    Bottom = 20,
+                    Left = 20,
+                    Right = 20,
+                },
+                PageOrientation = Rotativa.AspNetCore.Options.Orientation.Landscape,
+            };
+        } 
 
         private void CallingGenders()
         {
