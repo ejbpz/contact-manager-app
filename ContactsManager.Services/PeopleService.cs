@@ -4,6 +4,9 @@ using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services.Helpers;
+using CsvHelper;
+using System.Globalization;
+using CsvHelper.Configuration;
 
 namespace ContactsManager.Services
 {
@@ -177,6 +180,51 @@ namespace ContactsManager.Services
             await _peopleDbContext.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<MemoryStream> GetPeopleCSV()
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            using (StreamWriter streamWriter = new StreamWriter(memoryStream))
+            {
+                CsvConfiguration csvConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture);
+
+                CsvWriter csvWriter = new CsvWriter(streamWriter, csvConfiguration);
+
+                csvWriter.WriteField(nameof(PersonResponse.PersonName));
+                csvWriter.WriteField(nameof(PersonResponse.PersonEmail));
+                csvWriter.WriteField(nameof(PersonResponse.DateOfBirth));
+                csvWriter.WriteField(nameof(PersonResponse.Age));
+                csvWriter.WriteField(nameof(PersonResponse.Gender));
+                csvWriter.WriteField(nameof(PersonResponse.CountryName)); csvWriter.WriteField(nameof(PersonResponse.Address));
+                csvWriter.WriteField(nameof(PersonResponse.IsReceivingNewsLetters));
+                csvWriter.NextRecord();
+
+                List<PersonResponse>? people = await GetPeople();
+
+                foreach (PersonResponse person in people)
+                {
+                    csvWriter.WriteField(person.PersonName);
+                    csvWriter.WriteField(person.PersonEmail);
+                    csvWriter.WriteField(
+                        person.DateOfBirth.HasValue 
+                        ? person.DateOfBirth.Value.ToString("dd-MM-yyy") 
+                        : ""
+                    );
+                    csvWriter.WriteField(person.Age);
+                    csvWriter.WriteField(person.Gender);
+                    csvWriter.WriteField(person.CountryName);
+                    csvWriter.WriteField(person.Address);
+                    csvWriter.WriteField(person.IsReceivingNewsLetters);
+                    csvWriter.NextRecord();
+                    await csvWriter.FlushAsync();
+                }
+
+            }
+
+            MemoryStream newMemoryStream = new MemoryStream(memoryStream.ToArray());
+            newMemoryStream.Position = 0;
+            return newMemoryStream;
         }
     }
 }

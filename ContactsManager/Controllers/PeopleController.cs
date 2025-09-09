@@ -144,7 +144,14 @@ namespace ContactsManager.Controllers
                 },
                 PageOrientation = Rotativa.AspNetCore.Options.Orientation.Landscape,
             };
-        } 
+        }
+
+        [HttpGet("people-csv")]
+        public async Task<IActionResult> PeopleCSV()
+        {
+            MemoryStream memoryStream = await _peopleService.GetPeopleCSV();
+            return File(memoryStream, "application/octet-stream", "people.csv");
+        }
 
         private void CallingGenders()
         {
