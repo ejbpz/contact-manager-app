@@ -99,6 +99,7 @@ namespace ContactsManager.ServiceContracts.DTOs
                 PersonEmail = person.PersonEmail,
                 DateOfBirth = person.DateOfBirth,
                 IsReceivingNewsLetters = person.IsReceivingNewsLetters,
+                CountryName = person.Country?.CountryName,
                 Age = (person.DateOfBirth is not null) 
                     ? Math.Floor((DateTime.Now - person.DateOfBirth.Value).TotalDays / 365.25) 
                     : null,

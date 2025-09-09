@@ -4,6 +4,7 @@ using ContactsManager.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContactsManager.Models.Migrations
 {
     [DbContext(typeof(PeopleDbContext))]
-    partial class PeopleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250908214230_Reset_Database")]
+    partial class Reset_Database
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,16 +98,9 @@ namespace ContactsManager.Models.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
-                    b.Property<string>("TIN")
-                        .HasColumnType("varchar(8)")
-                        .HasColumnName("TaxIdentificationNumber");
-
                     b.HasKey("PersonId");
 
-                    b.ToTable("People", null, t =>
-                        {
-                            t.HasCheckConstraint("CHK_TIN", "TaxIdentificationNumber IS NULL OR LEN([TaxIdentificationNumber]) = 8");
-                        });
+                    b.ToTable("People", (string)null);
 
                     b.HasData(
                         new

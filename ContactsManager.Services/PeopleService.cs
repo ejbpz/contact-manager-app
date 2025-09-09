@@ -1,4 +1,5 @@
-﻿using ContactsManager.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using ContactsManager.Models;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
@@ -9,23 +10,13 @@ namespace ContactsManager.Services
     public class PeopleService : IPeopleService
     {
         private readonly PeopleDbContext _peopleDbContext;
-        private readonly ICountriesService _countriesService;
 
-        public PeopleService(PeopleDbContext peopleDbContext, ICountriesService countriesService)
+        public PeopleService(PeopleDbContext peopleDbContext)
         {
             _peopleDbContext = peopleDbContext;
-            _countriesService = countriesService;
         }
 
-        private PersonResponse ConvertPersonToPersonResponse(Person person)
-        {
-            PersonResponse personResponse = person.ToPersonResponse();
-            personResponse.CountryName = _countriesService.GetCountryByCountryId(personResponse.CountryId)?.CountryName;
-
-            return personResponse;
-        }
-
-        public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
+        public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
         {
             if (personAddRequest is null) throw new ArgumentNullException(nameof(personAddRequest));
 
@@ -34,29 +25,30 @@ namespace ContactsManager.Services
             Person person = personAddRequest.ToPerson();
             person.PersonId = Guid.NewGuid();
 
-            _peopleDbContext.sp_AddPerson(person);
+            _peopleDbContext.Add(person);
+            await _peopleDbContext.SaveChangesAsync();
 
-            return ConvertPersonToPersonResponse(person);
+            return person.ToPersonResponse();
         }
 
-        public List<PersonResponse> GetPeople()
+        public async Task<List<PersonResponse>> GetPeople()
         {
-            return _peopleDbContext.sp_GetPeople().Select(p => ConvertPersonToPersonResponse(p)).ToList();
+            return await _peopleDbContext.People.Include("Country").Select(p => p.ToPersonResponse()).ToListAsync();
         }
 
-        public PersonResponse? GetPersonByPersonId(Guid? personId)
+        public async Task<PersonResponse?> GetPersonByPersonId(Guid? personId)
         {
             if (personId is null) return null;
 
-               Person? person = _peopleDbContext.People.FirstOrDefault(person => person.PersonId == personId);
+               Person? person = await _peopleDbContext.People.FirstOrDefaultAsync(person => person.PersonId == personId);
 
             if (person is null) return null;
-            return ConvertPersonToPersonResponse(person);
+            return person.ToPersonResponse();
         }
 
-        public List<PersonResponse> GetFilteredPeople(string searchBy, string? query)
+        public async Task<List<PersonResponse>> GetFilteredPeople(string searchBy, string? query)
         {
-            List<PersonResponse> allPeople = GetPeople();
+            List<PersonResponse> allPeople = await GetPeople();
             if (string.IsNullOrEmpty(searchBy) || string.IsNullOrEmpty(query)) return allPeople;
             
             List<PersonResponse> matchingPeople = new List<PersonResponse>();
@@ -150,13 +142,13 @@ namespace ContactsManager.Services
             return sortedPeople;
         }
 
-        public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
+        public async Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest)
         {
             if (personUpdateRequest is null) throw new ArgumentNullException(nameof(personUpdateRequest));
 
             ValidationHelper.ModelValidation(personUpdateRequest);
 
-            Person? personToUpdate = _peopleDbContext.People.FirstOrDefault(p => p.PersonId == personUpdateRequest.PersonId);
+            Person? personToUpdate = await _peopleDbContext.People.FirstOrDefaultAsync(p => p.PersonId == personUpdateRequest.PersonId);
 
             if (personToUpdate is null) throw new ArgumentException("Given person Id doesn't exist.");
 
@@ -168,21 +160,21 @@ namespace ContactsManager.Services
             personToUpdate.Address = personUpdateRequest.Address;
             personToUpdate.IsReceivingNewsLetters = personUpdateRequest.IsReceivingNewsLetters;
             
-            _peopleDbContext.SaveChanges();
+            await _peopleDbContext.SaveChangesAsync();
 
-            return ConvertPersonToPersonResponse(personToUpdate);
+            return personToUpdate.ToPersonResponse();
         }
 
-        public bool DeletePerson(Guid? personId)
+        public async Task<bool> DeletePerson(Guid? personId)
         {
             if (personId is null) return false;
 
-            Person? person = _peopleDbContext.People.FirstOrDefault(p => p.PersonId == personId);
+            Person? person = await _peopleDbContext.People.FirstOrDefaultAsync(p => p.PersonId == personId);
 
             if (person is null) return false;
 
             _peopleDbContext.People.Remove(person);
-            _peopleDbContext.SaveChanges();
+            await _peopleDbContext.SaveChangesAsync();
 
             return true;
         }

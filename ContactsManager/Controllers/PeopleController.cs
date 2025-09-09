@@ -21,12 +21,12 @@ namespace ContactsManager.Controllers
         }
 
         [HttpGet("")]
-        public IActionResult Index(string searchBy, string? searchQuery, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrderOptions = SortOrderOptions.Ascending)
+        public async Task<IActionResult> Index(string searchBy, string? searchQuery, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrderOptions = SortOrderOptions.Ascending)
         {
             // Searching
             CreateColumns();
 
-            List<PersonResponse> allPeople = _peopleService.GetFilteredPeople(searchBy, searchQuery);
+            List<PersonResponse> allPeople = await _peopleService.GetFilteredPeople(searchBy, searchQuery);
 
             ViewBag.CurrentSearchBy = searchBy;
             ViewBag.CurrentSearchQuery = searchQuery;
@@ -43,49 +43,51 @@ namespace ContactsManager.Controllers
         }
 
         [HttpGet("new-person")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             CallingGenders();
-            CallingCountries();
+            await CallingCountries();
 
             return View();
         }
 
         //<form action = "~/people/new-person" method="post">
         [HttpPost("new-person")]
-        public IActionResult Create(PersonAddRequest? personAddRequest)
+        public async Task<IActionResult> Create(PersonAddRequest? personAddRequest)
         {
             if(!ModelState.IsValid)
             {
                 CallingGenders();
-                CallingCountries();
+                await CallingCountries();
 
                 return View();
             }
-            _peopleService.AddPerson(personAddRequest);
+            await _peopleService.AddPerson(personAddRequest);
             TempData["NewUser"] = $"{personAddRequest?.PersonName ?? "New person"} has been succesfully added.";
             return RedirectToAction("Index", "People");
         }
 
         [HttpGet("edit-person/{personId}")]
-        public IActionResult Edit(Guid? personId)
+        public async Task<IActionResult> Edit(Guid? personId)
         {
             CallingGenders();
-            CallingCountries();
+            await CallingCountries();
 
-            PersonUpdateRequest? personUpdateRequest = _peopleService.GetPersonByPersonId(personId)?.ToPersonUpdateRequest();
+            PersonResponse? personResponse = await _peopleService.GetPersonByPersonId(personId);
 
-            return View(personUpdateRequest);
+            if (personResponse is null) return RedirectToAction("Index", "People");
+
+            return View(personResponse.ToPersonUpdateRequest());
         }
 
         [HttpPost("edit-person/{personId}")]
-        public IActionResult Edit(PersonUpdateRequest personUpdateRequest)
+        public async Task<IActionResult> Edit(PersonUpdateRequest personUpdateRequest)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _peopleService.UpdatePerson(personUpdateRequest);
+                    await _peopleService.UpdatePerson(personUpdateRequest);
                     TempData["NewUser"] = $"{personUpdateRequest?.PersonName ?? "Person"} has been succesfully updated.";
                     return RedirectToAction("Index", "People");
                 }
@@ -93,23 +95,23 @@ namespace ContactsManager.Controllers
             catch (Exception) { }
 
             CallingGenders();
-            CallingCountries();
+            await CallingCountries();
 
             return View(personUpdateRequest);
         }
 
         [HttpGet("delete-view/{personId}")]
-        public IActionResult DeleteView(Guid? personId)
+        public async Task<IActionResult> DeleteView(Guid? personId)
         {
-            PersonResponse? personResponse = _peopleService.GetPersonByPersonId(personId);
+            PersonResponse? personResponse = await _peopleService.GetPersonByPersonId(personId);
             return PartialView("_Delete", personResponse);
         }
 
         [HttpPost("delete-person/{personId}")]
-        public IActionResult DeleteUser(Guid? personId)
+        public async Task<IActionResult> DeleteUser(Guid? personId)
         {
-            PersonResponse? personResponse = _peopleService.GetPersonByPersonId(personId);
-            bool wasDeleted = _peopleService.DeletePerson(personResponse?.PersonId);
+            PersonResponse? personResponse = await _peopleService.GetPersonByPersonId(personId);
+            bool wasDeleted = await _peopleService.DeletePerson(personResponse?.PersonId);
 
             if(wasDeleted)
             {
@@ -133,9 +135,10 @@ namespace ContactsManager.Controllers
             };
         }
 
-        private void CallingCountries()
+        private async Task CallingCountries()
         {
-            ViewData["Countries"] = _countriesService.GetCountries().Select(c => new SelectListItem() { Text = c.CountryName, Value = c.CountryId.ToString() });
+            List<CountryResponse>? countries = await _countriesService.GetCountries();
+            ViewData["Countries"] = countries.Select(c => new SelectListItem() { Text = c.CountryName, Value = c.CountryId.ToString() });
         }
     
         private void CreateColumns()

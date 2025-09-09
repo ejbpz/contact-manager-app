@@ -19,6 +19,14 @@ namespace ContactsManager.Models
             modelBuilder.Entity<Country>().ToTable("Countries");
             modelBuilder.Entity<Person>().ToTable("People");
 
+            // Fluent API
+            modelBuilder.Entity<Person>().Property(p => p.TIN)
+                .HasColumnName("TaxIdentificationNumber")
+                .HasColumnType("varchar(8)")
+                .HasDefaultValue(null);
+
+            modelBuilder.Entity<Person>().ToTable(p => p.HasCheckConstraint("CHK_TIN", "TaxIdentificationNumber IS NULL OR LEN([TaxIdentificationNumber]) = 8"));
+
             // Seed data to Countries and People
             List<Country> countries = ExtractCountriesFormJson();
             List<Person> people = ExtractPeopleFormJson();

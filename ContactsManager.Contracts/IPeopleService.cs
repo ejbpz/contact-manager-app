@@ -13,20 +13,20 @@ namespace ContactsManager.ServiceContracts
         /// </summary>
         /// <param name="personAddRequest">Person to be added</param>
         /// <returns>Returns the same Person with an ID.</returns>
-        PersonResponse AddPerson(PersonAddRequest? personAddRequest);
+        Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest);
 
         /// <summary>
         /// Retrieve all the people in the list.
         /// </summary>
         /// <returns>Returns a list of people.</returns>
-        List<PersonResponse> GetPeople();
+        Task<List<PersonResponse>> GetPeople();
 
         /// <summary>
         /// Request a person by its ID.
         /// </summary>
         /// <param name="personId">person's ID</param>
         /// <returns>Returns a person, base on its ID.</returns>
-        PersonResponse? GetPersonByPersonId(Guid? personId);
+        Task<PersonResponse?> GetPersonByPersonId(Guid? personId);
 
         /// <summary>
         /// Finds all the people that matched with the given filter and search string.
@@ -34,7 +34,7 @@ namespace ContactsManager.ServiceContracts
         /// <param name="searchBy">Filter to seach people.</param>
         /// <param name="query">Text to search.</param>
         /// <returns>Returns a list of people that match with the query.</returns>
-        List<PersonResponse> GetFilteredPeople(string searchBy, string? query);
+        Task<List<PersonResponse>> GetFilteredPeople(string searchBy, string? query);
 
         /// <summary>
         /// Sort a group of people by user preferences.
@@ -50,13 +50,13 @@ namespace ContactsManager.ServiceContracts
         /// </summary>
         /// <param name="personUpdateRequest">Person to be updated.</param>
         /// <returns>Returns the same person with its attributes updated.</returns>
-        PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest);
+        Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest);
 
         /// <summary>
         /// Deletes a person using its id.
         /// </summary>
         /// <param name="personId">Id to the person to be deleted.</param>
         /// <returns>Returns bool to know if was deleted.</returns>
-        bool DeletePerson(Guid? personId);
+        Task<bool> DeletePerson(Guid? personId);
     }
 }

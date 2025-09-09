@@ -21,37 +21,37 @@ namespace ContactsManager.Test
         #region AddCountry
         // When CountryAddRequest is null (ArgumentNullException).
         [Fact]
-        public void AddCountry_NullCountry()
+        public async Task AddCountry_NullCountry()
         {
             // Arrange
             CountryAddRequest? request = null;
 
             // Assert
-            Assert.Throws<ArgumentNullException>(() =>
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 // Act
-                _countriesService.AddCountry(request);
+                await _countriesService.AddCountry(request);
             });
         }
 
         // When the CountryName is null (ArgumentException).
         [Fact]
-        public void AddCountry_NullName()
+        public async Task AddCountry_NullName()
         {
             CountryAddRequest? request = new CountryAddRequest()
             {
                 CountryName = null,
             };
 
-            Assert.Throws<ArgumentException>(() =>
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                _countriesService.AddCountry(request);
+                await _countriesService.AddCountry(request);
             });
         }
 
         // When the CountryName is duplicate (ArgumentException).
         [Fact]
-        public void AddCountry_DuplicatedName()
+        public async Task AddCountry_DuplicatedName()
         {
             CountryAddRequest? request1 = new CountryAddRequest()
             {
@@ -62,16 +62,16 @@ namespace ContactsManager.Test
                 CountryName = "Costa Rica",
             };
 
-            Assert.Throws<ArgumentException>(() =>
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                _countriesService.AddCountry(request1);
-                _countriesService.AddCountry(request2);
+                await _countriesService.AddCountry(request1);
+                await _countriesService.AddCountry(request2);
             });
         }
 
         // When you supply proper CountryName (insert the country).
         [Fact]
-        public void AddCountry_ProperName()
+        public async Task AddCountry_ProperName()
         {
             // Arrange
             CountryAddRequest? request = new CountryAddRequest()
@@ -80,8 +80,8 @@ namespace ContactsManager.Test
             };
 
             // Act
-            CountryResponse countryResponse = _countriesService.AddCountry(request);
-            List<CountryResponse> actualAllProducts = _countriesService.GetCountries();
+            CountryResponse countryResponse = await _countriesService.AddCountry(request);
+            List<CountryResponse> actualAllProducts = await _countriesService.GetCountries();
 
             // Assert
             Assert.True(countryResponse.CountryId != Guid.Empty);
@@ -92,17 +92,17 @@ namespace ContactsManager.Test
         #region GetCountries
         // When the list of countries is empty by default.
         [Fact]
-        public void GetAllCountries_EmptyList()
+        public async Task GetAllCountries_EmptyList()
         {
             // Act
-            List<CountryResponse> actualCountryList = _countriesService.GetCountries();
+            List<CountryResponse> actualCountryList = await _countriesService.GetCountries();
 
             // Assert
             Assert.Empty(actualCountryList);
         }
 
         [Fact]
-        public void GetAllCountries_AddFewCountries()
+        public async Task GetAllCountries_AddFewCountries()
         {
             // Arrange
             List<CountryAddRequest> actualCountryList = new List<CountryAddRequest>()
@@ -126,10 +126,10 @@ namespace ContactsManager.Test
             // Act
             foreach (CountryAddRequest countryAddRequest in actualCountryList)
             {
-                countryResponses.Add(_countriesService.AddCountry(countryAddRequest));
+                countryResponses.Add(await _countriesService.AddCountry(countryAddRequest));
             }
 
-            List<CountryResponse> allCountries = _countriesService.GetCountries();
+            List<CountryResponse> allCountries = await _countriesService.GetCountries();
 
             // Assert
             foreach (CountryResponse expectedCountry in countryResponses)
@@ -142,13 +142,13 @@ namespace ContactsManager.Test
         #region GetCountryById
         // When the CountryId is null, return null as a CountryResponse?
         [Fact]
-        public void GetCountryById_NullCountryId()
+        public async Task GetCountryById_NullCountryId()
         {
             // Arrange
             Guid? countryId = null;
 
             // Act
-            CountryResponse? countryResponse = _countriesService.GetCountryByCountryId(countryId);
+            CountryResponse? countryResponse = await _countriesService.GetCountryByCountryId(countryId);
 
             // Assert
             Assert.Null(countryResponse);
@@ -156,7 +156,7 @@ namespace ContactsManager.Test
 
         // When we supply a valid CountryId, it should return a CountryResponse.
         [Fact]
-        public void GetCountryById_ProperId()
+        public async Task GetCountryById_ProperId()
         {
             // Arrange
             CountryAddRequest countryAddRequest = new CountryAddRequest()
@@ -165,8 +165,8 @@ namespace ContactsManager.Test
             };
 
             // Act
-            CountryResponse expectedResponse = _countriesService.AddCountry(countryAddRequest);
-            CountryResponse? countryResponse = _countriesService.GetCountryByCountryId(expectedResponse.CountryId);
+            CountryResponse expectedResponse = await _countriesService.AddCountry(countryAddRequest);
+            CountryResponse? countryResponse = await _countriesService.GetCountryByCountryId(expectedResponse.CountryId);
 
             // Assert
             Assert.Equal(expectedResponse, countryResponse);

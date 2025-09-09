@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ContactsManager.Models
 {
@@ -28,5 +29,11 @@ namespace ContactsManager.Models
 
         // bit in SQL
         public bool IsReceivingNewsLetters { get; set; }
+
+        // Tax Identification Number
+        public string? TIN { get; set; }
+
+        [ForeignKey("CountryId")]
+        public Country? Country { get; set; }
     }
 }

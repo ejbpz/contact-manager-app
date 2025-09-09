@@ -22,11 +22,11 @@ namespace ContactsManager.Test
                 ));
             _peopleService = new PeopleService(new PeopleDbContext(
                     new DbContextOptionsBuilder<PeopleDbContext>().Options
-                ), _countryService);
+                ));
             _testOutputHelper = testOutputHelper;
         }
 
-        private List<CountryResponse?> AddingCountries()
+        private async Task<List<CountryResponse?>> AddingCountries()
         {
             CountryAddRequest? countryAddRequest1 = new CountryAddRequest() { CountryName = "Costa Rica" };
             CountryAddRequest? countryAddRequest2 = new CountryAddRequest() { CountryName = "Canada" };
@@ -45,12 +45,12 @@ namespace ContactsManager.Test
             
             List<CountryResponse?> countriesAdded = new List<CountryResponse?>();
 
-            foreach (CountryAddRequest countryAddRequest in countriesToAdd) countriesAdded.Add(_countryService.AddCountry(countryAddRequest));
+            foreach (CountryAddRequest countryAddRequest in countriesToAdd) countriesAdded.Add(await _countryService.AddCountry(countryAddRequest));
 
             return countriesAdded;
         }
 
-        private List<PersonResponse> AddingPeople(List<CountryResponse?> countriesAdded)
+        private async Task<List<PersonResponse>> AddingPeople(List<CountryResponse?> countriesAdded)
         {
             PersonAddRequest? personAddRequest1 = new PersonAddRequest()
             {
@@ -116,7 +116,7 @@ namespace ContactsManager.Test
 
             foreach (PersonAddRequest personAddRequest in peopleToAdd)
             {
-                listOfPeopleAdded.Add(_peopleService.AddPerson(personAddRequest));
+                listOfPeopleAdded.Add(await _peopleService.AddPerson(personAddRequest));
             }
 
             return listOfPeopleAdded;
@@ -125,22 +125,22 @@ namespace ContactsManager.Test
         #region AddPerson
         // When we supply a null value (ArgumentNullException).
         [Fact]
-        public void AddPerson_NullPerson()
+        public async Task AddPerson_NullPerson()
         {
             // Arrange
             PersonAddRequest? personAddRequest = null;
 
             // Assert
-            Assert.Throws<ArgumentNullException>(() =>
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 // Act
-                _peopleService.AddPerson(personAddRequest);
+                await _peopleService.AddPerson(personAddRequest);
             });
         }
 
         // When we supply a attribute (PersonName) null value (ArgumentException).
         [Fact]
-        public void AddPerson_NullPersonName()
+        public async Task AddPerson_NullPersonName()
         {
             // Arrange
             PersonAddRequest? personAddRequest = new PersonAddRequest()
@@ -149,16 +149,16 @@ namespace ContactsManager.Test
             };
 
             // Assert
-            Assert.Throws<ArgumentException>(() =>
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
                 // Act
-                _peopleService.AddPerson(personAddRequest);
+                await _peopleService.AddPerson(personAddRequest);
             });
         }
 
         // When we supply a correct PersonAddRequest value and should be in the list of people.
         [Fact]
-        public void AddPerson_ProperPerson()
+        public async Task AddPerson_ProperPerson()
         {
             // Arrange
             PersonAddRequest? personAddRequest = new PersonAddRequest()
@@ -175,8 +175,8 @@ namespace ContactsManager.Test
             List<PersonResponse> listOfPeople = new List<PersonResponse>();
 
             // Act
-            personRetrieved = _peopleService.AddPerson(personAddRequest);
-            listOfPeople = _peopleService.GetPeople();
+            personRetrieved = await _peopleService.AddPerson(personAddRequest);
+            listOfPeople = await _peopleService.GetPeople();
 
             // Assert
             Assert.True(personRetrieved.PersonId != Guid.Empty);
@@ -187,13 +187,13 @@ namespace ContactsManager.Test
         #region GetPerson
         // When the person ID is not supplied, it should return null.
         [Fact]
-        public void GetPerson_NullGuid()
+        public async Task GetPerson_NullGuid()
         {
             // Arrange
             Guid? personId = null;
 
             // Act
-            PersonResponse? personResponse = _peopleService.GetPersonByPersonId(personId);
+            PersonResponse? personResponse = await _peopleService.GetPersonByPersonId(personId);
 
             // Assert
             Assert.Null(personResponse);
@@ -201,7 +201,7 @@ namespace ContactsManager.Test
 
         // If we supply a valid personId, it should return a valid PersonResponse.
         [Fact]
-        public void GetPerson_ValidPersonId()
+        public async Task GetPerson_ValidPersonId()
         {
             // Arrange Country
             CountryAddRequest? countryAddRequest = new CountryAddRequest()
@@ -211,7 +211,7 @@ namespace ContactsManager.Test
             CountryResponse? countryAdded = new CountryResponse();
 
             // Act Country
-            countryAdded = _countryService.AddCountry(countryAddRequest);
+            countryAdded = await _countryService.AddCountry(countryAddRequest);
 
             // Arrange Person
             PersonAddRequest? personAddRequest = new PersonAddRequest()
@@ -229,9 +229,9 @@ namespace ContactsManager.Test
             List<PersonResponse> listOfPeople = new List<PersonResponse>();
 
             // Act Person
-            personAdded = _peopleService.AddPerson(personAddRequest);
-            personSearched = _peopleService.GetPersonByPersonId(personAdded.PersonId);
-            listOfPeople = _peopleService.GetPeople();
+            personAdded = await _peopleService.AddPerson(personAddRequest);
+            personSearched = await _peopleService.GetPersonByPersonId(personAdded.PersonId);
+            listOfPeople = await _peopleService.GetPeople();
 
             // Assert
             Assert.Equal(personAdded, personSearched);
@@ -242,13 +242,13 @@ namespace ContactsManager.Test
         #region GetPeople
         // The list of people is empty
         [Fact]
-        public void GetPeople_EmptyList()
+        public async Task GetPeople_EmptyList()
         {
             // Arrange
             List<PersonResponse> listOfPeople = new List<PersonResponse>();
 
             // Act
-            listOfPeople = _peopleService.GetPeople();
+            listOfPeople = await _peopleService.GetPeople();
 
             // Assert
             Assert.Empty(listOfPeople);
@@ -256,11 +256,11 @@ namespace ContactsManager.Test
 
         // We'll need to receive all the people which we added.
         [Fact]
-        public void GetPeople_AddPeople()
+        public async Task GetPeople_AddPeople()
         {
-            List<CountryResponse?> countriesAdded = AddingCountries();
-            List<PersonResponse> listOfPeopleAdded = AddingPeople(countriesAdded);
-            List<PersonResponse> listOfPeople = _peopleService.GetPeople();
+            List<CountryResponse?> countriesAdded = await AddingCountries();
+            List<PersonResponse> listOfPeopleAdded = await AddingPeople(countriesAdded);
+            List<PersonResponse> listOfPeople = await _peopleService.GetPeople();
 
             // Print people added
             _testOutputHelper.WriteLine("Expected:");
@@ -286,11 +286,11 @@ namespace ContactsManager.Test
         #region GetFilteredPeople
         // If the search is not supplied, it'll return every person.
         [Fact]
-        public void GetFilteredPeople_EmptySearch()
+        public async Task GetFilteredPeople_EmptySearch()
         {
-            List<CountryResponse?> countriesAdded = AddingCountries();
-            List<PersonResponse> listOfPeopleAdded = AddingPeople(countriesAdded);
-            List<PersonResponse> listOfPeople = _peopleService.GetFilteredPeople(nameof(Person.PersonName), "");
+            List<CountryResponse?> countriesAdded = await AddingCountries();
+            List<PersonResponse> listOfPeopleAdded = await AddingPeople(countriesAdded);
+            List<PersonResponse> listOfPeople = await _peopleService.GetFilteredPeople(nameof(Person.PersonName), "");
 
             // Print people added
             _testOutputHelper.WriteLine("People already added:");
@@ -314,11 +314,11 @@ namespace ContactsManager.Test
 
         // We'll add a few persons, then we are going to search based on name and a query.
         [Fact]
-        public void GetFilteredPeople_SearchByPersonName()
+        public async Task GetFilteredPeople_SearchByGender()
         {
-            List<CountryResponse?> countriesAdded = AddingCountries();
-            List<PersonResponse> listOfPeopleAdded = AddingPeople(countriesAdded);
-            List<PersonResponse>? listOfPeople = _peopleService.GetFilteredPeople(nameof(Person.Gender), "Other");
+            List<CountryResponse?> countriesAdded = await AddingCountries();
+            List<PersonResponse> listOfPeopleAdded = await AddingPeople(countriesAdded);
+            List<PersonResponse>? listOfPeople = await _peopleService.GetFilteredPeople(nameof(Person.Gender), "Other");
 
             // Print people added
             _testOutputHelper.WriteLine("People already added:");
@@ -350,10 +350,10 @@ namespace ContactsManager.Test
         #region GetSortedPeople
         // When we sort based on PersonName in descending order. It should return a List with this preferences.
         [Fact]
-        public void GetSortedPeople_EmptySearch()
+        public async Task GetSortedPeople_EmptySearch()
         {
-            List<CountryResponse?> countriesAdded = AddingCountries();
-            List<PersonResponse> listOfPeopleAdded = AddingPeople(countriesAdded);
+            List<CountryResponse?> countriesAdded = await AddingCountries();
+            List<PersonResponse> listOfPeopleAdded = await AddingPeople(countriesAdded);
 
             List<PersonResponse> listOfPeopleSorted = _peopleService.GetSortedPeople(listOfPeopleAdded, nameof(Person.PersonName), SortOrderOptions.Descending);
 
@@ -387,25 +387,25 @@ namespace ContactsManager.Test
         #region UpdatePerson
         // If we supply a null value, should throw an exception (ArgumentNullException).
         [Fact]
-        public void UpdatePerson_NullPerson()
+        public async Task UpdatePerson_NullPerson()
         {
             // Arrange
             PersonUpdateRequest? personUpdate = null;
 
             // Assert
-            Assert.Throws<ArgumentNullException>(() =>
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 // Act
-                _peopleService.UpdatePerson(personUpdate);
+                await _peopleService.UpdatePerson(personUpdate);
             });
         }
 
         // If we supply a null person id or not known id, should throw an exception (ArgumentException).
         [Fact]
-        public void UpdatePerson_NullPersonId()
+        public async Task UpdatePerson_NullPersonId()
         {
             // Arrange
-            List<CountryResponse?> countriesAdded = AddingCountries();
+            List<CountryResponse?> countriesAdded = await AddingCountries();
 
             PersonUpdateRequest? personUpdate = new PersonUpdateRequest()
             {
@@ -420,48 +420,48 @@ namespace ContactsManager.Test
             };
 
             // Assert
-            Assert.Throws<ArgumentException>(() =>
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
                 // Act
-                _peopleService.UpdatePerson(personUpdate);
+                await _peopleService.UpdatePerson(personUpdate);
             });
         }
 
         // If we supply a null person name, should throw an exception (ArgumentException).
         [Fact]
-        public void UpdatePerson_NullPersonName()
+        public async Task UpdatePerson_NullPersonName()
         {
             // Arrange
-            List<CountryResponse?> countriesAdded = AddingCountries();
-            List<PersonResponse> peopleAdded = AddingPeople(countriesAdded);
+            List<CountryResponse?> countriesAdded = await AddingCountries();
+            List<PersonResponse> peopleAdded = await AddingPeople(countriesAdded);
 
             PersonUpdateRequest? personUpdate = peopleAdded[0].ToPersonUpdateRequest();
             personUpdate.PersonName = null;
 
             // Assert
-            Assert.Throws<ArgumentException>(() =>
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
                 // Act
-                _peopleService.UpdatePerson(personUpdate);
+                await _peopleService.UpdatePerson(personUpdate);
             });
         }
 
         // If we supply a null person name, should throw an exception (ArgumentException).
         [Fact]
-        public void UpdatePerson_ProperPerson()
+        public async Task UpdatePerson_ProperPerson()
         {
             // Arrange
-            List<CountryResponse?> countriesAdded = AddingCountries();
-            List<PersonResponse> peopleAdded = AddingPeople(countriesAdded);
+            List<CountryResponse?> countriesAdded = await AddingCountries();
+            List<PersonResponse> peopleAdded = await AddingPeople(countriesAdded);
 
             PersonUpdateRequest? personUpdate = peopleAdded[0].ToPersonUpdateRequest();
             personUpdate.PersonName = "Eduardo";
             personUpdate.PersonEmail = "email@example.com";
 
             // Act
-            PersonResponse personResponse = _peopleService.UpdatePerson(personUpdate);
+            PersonResponse personResponse = await _peopleService.UpdatePerson(personUpdate);
 
-            PersonResponse? personExpected = _peopleService.GetPersonByPersonId(personResponse.PersonId);
+            PersonResponse? personExpected = await _peopleService.GetPersonByPersonId(personResponse.PersonId);
 
             // Assert
             Assert.Equal(personExpected, personResponse);
@@ -471,11 +471,11 @@ namespace ContactsManager.Test
         #region DeletePerson
         // If we supply an invalid PersonId (null | it does not exist), it should return false.
         [Fact]
-        public void DeletePerson_WrongId()
+        public async Task DeletePerson_WrongId()
         {
             // Act
-            bool wasDeleted1 = _peopleService.DeletePerson(Guid.NewGuid());
-            bool wasDeleted2 = _peopleService.DeletePerson(null);
+            bool wasDeleted1 = await _peopleService.DeletePerson(Guid.NewGuid());
+            bool wasDeleted2 = await _peopleService.DeletePerson(null);
 
             // Assert
             Assert.False(wasDeleted1);
@@ -484,17 +484,17 @@ namespace ContactsManager.Test
 
         // If we supply a valid PersonId (exist), it should return true;
         [Fact]
-        public void DeletePerson_ProperId()
+        public async Task DeletePerson_ProperId()
         {
             // Arrange
-            List<CountryResponse?> countriesAdded = AddingCountries();
-            List<PersonResponse> peopleAdded = AddingPeople(countriesAdded);
+            List<CountryResponse?> countriesAdded = await AddingCountries();
+            List<PersonResponse> peopleAdded = await AddingPeople(countriesAdded);
             List<bool> wereDeleted = new List<bool>();
 
             // Act
             foreach (PersonResponse personResponse in peopleAdded)
             {
-                wereDeleted.Add(_peopleService.DeletePerson(personResponse.PersonId));
+                wereDeleted.Add(await _peopleService.DeletePerson(personResponse.PersonId));
             }
 
             // Assert
