@@ -1,12 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
+using System.Globalization;
 using ContactsManager.Models;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services.Helpers;
-using CsvHelper;
-using System.Globalization;
-using CsvHelper.Configuration;
 
 namespace ContactsManager.Services
 {
@@ -206,11 +207,9 @@ namespace ContactsManager.Services
                 {
                     csvWriter.WriteField(person.PersonName);
                     csvWriter.WriteField(person.PersonEmail);
-                    csvWriter.WriteField(
-                        person.DateOfBirth.HasValue 
-                        ? person.DateOfBirth.Value.ToString("dd-MM-yyy") 
-                        : ""
-                    );
+                    csvWriter.WriteField(person.DateOfBirth.HasValue 
+                        ? person.DateOfBirth.Value.ToString("dd/MM/yyyy") 
+                        : "");
                     csvWriter.WriteField(person.Age);
                     csvWriter.WriteField(person.Gender);
                     csvWriter.WriteField(person.CountryName);
@@ -225,6 +224,68 @@ namespace ContactsManager.Services
             MemoryStream newMemoryStream = new MemoryStream(memoryStream.ToArray());
             newMemoryStream.Position = 0;
             return newMemoryStream;
+        }
+
+        public async Task<MemoryStream> GetPeopleExcel()
+        {
+            MemoryStream memoryStream = new MemoryStream();
+
+            //ExcelPackage.License.SetNonCommercialPersonal("");
+
+            using (ExcelPackage excelPackage = new ExcelPackage(memoryStream))
+            {
+                ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add("people-sheet");
+                worksheet.Cells["A1"].Value = "Name";
+                worksheet.Cells["B1"].Value = "Email";
+                worksheet.Cells["C1"].Value = "Date of birth";
+                worksheet.Cells["D1"].Value = "Age";
+                worksheet.Cells["E1"].Value = "Gender";
+                worksheet.Cells["F1"].Value = "Address";
+                worksheet.Cells["G1"].Value = "Country";
+                worksheet.Cells["H1"].Value = "Receiving newsletters";
+
+                using (ExcelRange headerCells = worksheet.Cells["A1:H1"])
+                {
+                    headerCells.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    headerCells.Style.Fill.BackgroundColor.SetColor(System.Drawing.ColorTranslator.FromHtml("#43A490"));
+                    headerCells.Style.Font.Bold = true;
+                    headerCells.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                }
+
+                int row = 2;
+                List<PersonResponse> people = await GetPeople();
+
+                foreach(PersonResponse person in people)
+                {
+                    worksheet.Cells[row, 1].Value = person.PersonName;
+                    worksheet.Cells[row, 2].Value = person.PersonEmail;
+                    worksheet.Cells[row, 3].Value = person.DateOfBirth.HasValue 
+                        ? person.DateOfBirth.Value.ToString("dd-MM-yyyy")
+                        : "";
+                    worksheet.Cells[row, 4].Value = person.Age;
+                    worksheet.Cells[row, 5].Value = person.Gender;
+                    worksheet.Cells[row, 6].Value = person.Address;
+                    worksheet.Cells[row, 7].Value = person.CountryName;
+                    worksheet.Cells[row, 8].Value = person.IsReceivingNewsLetters;
+                    row++;
+                }
+
+                using (ExcelRange contentCells = worksheet.Cells[$"A2:H{row}"])
+                {
+                    contentCells.Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                }
+
+                worksheet.Cells[$"A1:H{row - 1}"].AutoFitColumns();
+                worksheet.Cells[$"A1:H{row - 1}"].Style.Border.Top.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                worksheet.Cells[$"A1:H{row - 1}"].Style.Border.Bottom.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                worksheet.Cells[$"A1:H{row - 1}"].Style.Border.Right.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+                worksheet.Cells[$"A1:H{row - 1}"].Style.Border.Left.Style = OfficeOpenXml.Style.ExcelBorderStyle.Thin;
+
+                await excelPackage.SaveAsync();
+            }
+
+            memoryStream.Position = 0;
+            return memoryStream;
         }
     }
 }

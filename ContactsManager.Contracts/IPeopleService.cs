@@ -64,5 +64,11 @@ namespace ContactsManager.ServiceContracts
         /// </summary>
         /// <returns>Returns the memory stream with CSV data.</returns>
         Task<MemoryStream> GetPeopleCSV();
+
+        /// <summary>
+        /// Returns people as Excel.
+        /// </summary>
+        /// <returns>Returns the memory stream with Excel data.</returns>
+        Task<MemoryStream> GetPeopleExcel();
     }
 }

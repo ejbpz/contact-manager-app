@@ -153,6 +153,13 @@ namespace ContactsManager.Controllers
             return File(memoryStream, "application/octet-stream", "people.csv");
         }
 
+        [HttpGet("people-excel")]
+        public async Task<IActionResult> PeopleExcel()
+        {
+            MemoryStream memoryStream = await _peopleService.GetPeopleExcel();
+            return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "people.xlsx");
+        }
+
         private void CallingGenders()
         {
             ViewData["Genders"] = new Dictionary<string, string>()
