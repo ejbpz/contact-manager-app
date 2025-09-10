@@ -1,4 +1,5 @@
 ﻿using ContactsManager.ServiceContracts.DTOs;
+using Microsoft.AspNetCore.Http;
 
 namespace ContactsManager.ServiceContracts
 {
@@ -26,5 +27,12 @@ namespace ContactsManager.ServiceContracts
         /// <param name="countryId">GUID to be searched.</param>
         /// <returns>Returns the country with this GUID.</returns>
         Task<CountryResponse?> GetCountryByCountryId(Guid? countryId);
+
+        /// <summary>
+        /// Uploads countries from Excel file into database.
+        /// </summary>
+        /// <param name="formFile">Excel file with list of countries.</param>
+        /// <returns>Returns the number of countries added.</returns>
+        Task<int> UploadCountriesFromExcelFile(IFormFile formFile);
     }
 }

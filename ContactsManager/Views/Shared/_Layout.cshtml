@@ -25,14 +25,19 @@
             </button>
             <div class="absolute top-[76px] left-0 z-[60] hidden h-fit w-full rounded-b-xl bg-[#373A4D] pb-4 shadow-lg sm:hidden" id="menuItems">
                 <ul class="flex w-full flex-col items-center text-center">
-                    <a href="~/people" class="w-full py-3">
+                    <a asp-action="Index" asp-controller="People" class="w-full py-3">
                         <li>
                             People
                         </li> 
                     </a>
-                    <a href="~/people/new-person" class="w-full py-3">
+                    <a asp-action="Create" asp-controller="People" class="w-full py-3">
                         <li>
                             New person
+                        </li>
+                    </a>
+                    <a asp-action="Index" asp-controller="Countries" class="w-full py-3">
+                        <li>
+                            Add countries
                         </li>
                     </a>
                 </ul>
@@ -41,18 +46,25 @@
             @* Menu desktop *@
             <div class="h-[1px] w-full border-b-[1px] border-b-[#f2f2f11a] not-sm:hidden"></div>
             <ul class="w-full not-sm:hidden">
-                <a href="~/people" class="menu-options options relative flex h-20 w-full cursor-pointer items-center text-center hover:bg-[#434659]">
+                <a asp-action="Index" asp-controller="People" class="menu-options options relative flex h-20 w-full cursor-pointer items-center text-center hover:bg-[#434659]">
                     <div class="absolute left-0 h-full w-1"></div>
                     <li class="w-full">
                         <i class="fa-solid fa-users mr-1"></i>
                         People
                     </li>
                 </a>
-                <a href="~/people/new-person" class="menu-options options relative flex h-20 w-full cursor-pointer items-center text-center hover:bg-[#434659]">
+                <a asp-action="Create" asp-controller="People" class="menu-options options relative flex h-20 w-full cursor-pointer items-center text-center hover:bg-[#434659]">
                     <div class="absolute left-0 h-full w-1"></div>
                     <li class="w-full">
                         <i class="fa-solid fa-user-plus mr-1"></i>
                         New person
+                    </li>
+                </a>
+                <a asp-action="Index" asp-controller="Countries" class="menu-options options relative flex h-20 w-full cursor-pointer items-center text-center hover:bg-[#434659]">
+                    <div class="absolute left-0 h-full w-1"></div>
+                    <li class="w-full">
+                        <i class="fa-solid fa-file-arrow-up"></i>
+                        Add countries
                     </li>
                 </a>
             </ul>

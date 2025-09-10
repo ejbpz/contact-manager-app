@@ -1,6 +1,7 @@
 ﻿const routes = new Object({
     0: '/people',
-    1: '/people/new-person'
+    1: '/people/new-person',
+    2: '/countries/upload-excel',
 });
 
 let buttonMenu = document.querySelector('#buttonMenu');
@@ -12,6 +13,7 @@ buttonMenu.addEventListener('click', () => {
 });
 
 for (let i = 0; i < Object.keys(routes).length; i++) {
+    console.log(document.location.pathname)
     if (document.location.pathname == routes[i]) {
         options[i].classList.add('menu-options-selected');
     } else {
