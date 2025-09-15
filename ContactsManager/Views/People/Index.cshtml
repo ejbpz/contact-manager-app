@@ -86,9 +86,11 @@
     </div>
 </form>
 
-<a asp-action="PeoplePDF" asp-controller="People">Generate PDF</a>
-<a asp-action="PeopleCSV" asp-controller="People">Generate CSV</a>
-<a asp-action="PeopleExcel" asp-controller="People">Generate Excel</a>
+<div class="mt-5 flex w-full justify-center gap-3 not-sm:flex-col not-sm:items-center">
+    <a asp-action="PeoplePDF" asp-controller="People" class="block w-fit rounded-sm border-[1px] border-[#43A490] px-2 py-1 font-medium text-[#43A490] not-[370px]:text-sm hover:bg-[#43A490] hover:text-white">Generate PDF</a>
+    <a asp-action="PeopleCSV" asp-controller="People" class="block w-fit rounded-sm border-[1px] border-[#43A490] px-2 py-1 font-medium text-[#43A490] not-[370px]:text-sm hover:bg-[#43A490] hover:text-white">Generate CSV</a>
+    <a asp-action="PeopleExcel" asp-controller="People" class="block w-fit rounded-sm border-[1px] border-[#43A490] px-2 py-1 font-medium text-[#43A490] not-[370px]:text-sm hover:bg-[#43A490] hover:text-white">Generate Excel</a>
+</div>
 
 @section Scripts {
     @if (ViewBag.NewUser != null)

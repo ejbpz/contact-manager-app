@@ -2,26 +2,27 @@
     ViewBag.Title = "Add Country";
 }
 
-<h2>Upload countries from Excel</h2>
+<section>
+    <div class="flex items-center gap-2">
+        <a asp-action="Index" asp-controller="People" class="flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-200">
+            <i class="fa-solid fa-angle-left"></i>
+        </a>
+        <h2 class="font-quicksand text-xl font-bold not-[370px]:text-lg">Upload countries from Excel</h2>
+    </div>
 
-<div>
-    <form asp-action="UploadExcel" asp-controller="Countries" method="post" enctype="multipart/form-data">
+    <form asp-action="UploadExcel" asp-controller="Countries" method="post" enctype="multipart/form-data" class="mt-5">
         @* Excel File *@
-        <div>
-            <div>
-                <label>Choose an 'xlsx' file</label>
-            </div>
-            <div>
-                <input type="file" name="formFile" accept=".xlsx"/>
-                <div>@ViewBag.ErrorMessage</div>
+        <div class="rounded-xl bg-white p-4 shadow-lg">
+            <label class="font-semibold">
+                * Choose an '.xlsx' file
+            </label>
+            <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1">
+                <input type="file" name="formFile" accept=".xlsx" class="h-full w-full cursor-pointer py-[15px]" />
             </div>
         </div>
 
-        <div>
-            <div></div>
-            <div>
-                <button type="submit">Upload</button>
-            </div>
+        <div class="mt-5 block w-20 cursor-pointer rounded-sm border-[1px] border-[#43A490] bg-[#43A490] px-1 py-[5.3px] font-medium text-white">
+            <button type="submit" id="buttonSubmit" class="h-full w-full cursor-pointer">Upload</button>
         </div>
     </form>
-</div>
+</section>
