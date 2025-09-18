@@ -8,7 +8,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IPeopleService, PeopleService>();
 
-builder.Services.AddDbContext<PeopleDbContext>(
+builder.Services.AddDbContext<ApplicationDbContext>(
     options => {
         options.UseSqlServer(builder.Configuration.GetConnectionString("PeopleDBConnection"));
     });

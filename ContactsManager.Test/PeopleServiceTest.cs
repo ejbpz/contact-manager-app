@@ -1,11 +1,12 @@
-﻿using ContactsManager.Models;
+﻿using System;
+using Xunit.Abstractions;
+using Microsoft.EntityFrameworkCore;
+using ContactsManager.Models;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services;
-using Microsoft.EntityFrameworkCore;
-using System;
-using Xunit.Abstractions;
+using EntityFrameworkCoreMock;
 
 namespace ContactsManager.Test
 {
@@ -17,12 +18,21 @@ namespace ContactsManager.Test
 
         public PeopleServiceTest(ITestOutputHelper testOutputHelper)
         {
-            _countryService = new CountriesService(new PeopleDbContext(
-                    new DbContextOptionsBuilder<PeopleDbContext>().Options
-                ));
-            _peopleService = new PeopleService(new PeopleDbContext(
-                    new DbContextOptionsBuilder<PeopleDbContext>().Options
-                ));
+            List<Person> people = new List<Person>() { };
+
+            List<Country> countries = new List<Country>() { };
+
+            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
+                new DbContextOptionsBuilder<ApplicationDbContext>().Options
+            );
+
+            ApplicationDbContext dbContext = dbContextMock.Object;
+            dbContextMock.CreateDbSetMock<Person>(temp => temp.People, people);
+            dbContextMock.CreateDbSetMock<Country>(temp => temp.Countries, countries);
+
+
+            _countryService = new CountriesService(dbContext);
+            _peopleService = new PeopleService(dbContext);
             _testOutputHelper = testOutputHelper;
         }
 

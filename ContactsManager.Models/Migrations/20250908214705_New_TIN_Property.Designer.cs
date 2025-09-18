@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ContactsManager.Models.Migrations
 {
-    [DbContext(typeof(PeopleDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250908214705_New_TIN_Property")]
     partial class New_TIN_Property
     {

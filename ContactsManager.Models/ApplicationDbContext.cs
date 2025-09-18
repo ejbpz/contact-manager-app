@@ -5,12 +5,12 @@ using System.Text.Json;
 
 namespace ContactsManager.Models
 {
-    public class PeopleDbContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
-        public DbSet<Country> Countries { get; set; }
-        public DbSet<Person> People { get; set; }
+        public virtual DbSet<Country> Countries { get; set; }
+        public virtual DbSet<Person> People { get; set; }
 
-        public PeopleDbContext(DbContextOptions options) : base(options) { }
+        public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

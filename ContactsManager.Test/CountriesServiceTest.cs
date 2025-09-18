@@ -3,6 +3,8 @@ using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.Services;
 using Microsoft.EntityFrameworkCore;
+using EntityFrameworkCoreMock;
+using Moq;
 
 namespace ContactsManager.Test
 {
@@ -12,10 +14,19 @@ namespace ContactsManager.Test
 
         public CountriesServiceTest()
         {
-            _countriesService = new CountriesService(
-                new PeopleDbContext(
-                    new DbContextOptionsBuilder<PeopleDbContext>().Options
-                ));
+            List<Country> countries = new List<Country>()
+            {
+
+            };
+
+            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
+                new DbContextOptionsBuilder<ApplicationDbContext>().Options
+            );
+
+            ApplicationDbContext dbContext = dbContextMock.Object;
+            dbContextMock.CreateDbSetMock(temp => temp.Countries, countries);
+
+            _countriesService = new CountriesService(dbContext);
         }
 
         #region AddCountry

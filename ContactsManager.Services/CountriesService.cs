@@ -10,9 +10,9 @@ namespace ContactsManager.Services
 {
     public class CountriesService : ICountriesService
     {
-        private PeopleDbContext _peopleDbContext;
+        private ApplicationDbContext _peopleDbContext;
 
-        public CountriesService(PeopleDbContext peopleDbContext)
+        public CountriesService(ApplicationDbContext peopleDbContext)
         {
             _peopleDbContext = peopleDbContext;
         }

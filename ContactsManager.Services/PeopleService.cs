@@ -13,9 +13,9 @@ namespace ContactsManager.Services
 {
     public class PeopleService : IPeopleService
     {
-        private readonly PeopleDbContext _peopleDbContext;
+        private readonly ApplicationDbContext _peopleDbContext;
 
-        public PeopleService(PeopleDbContext peopleDbContext)
+        public PeopleService(ApplicationDbContext peopleDbContext)
         {
             _peopleDbContext = peopleDbContext;
         }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ContactsManager.Models.Migrations
 {
-    [DbContext(typeof(PeopleDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20250905203343_GetPeople_StoredProcedure")]
     partial class GetPeople_StoredProcedure
     {
