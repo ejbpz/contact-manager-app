@@ -4,20 +4,20 @@ using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.Services;
 using Microsoft.EntityFrameworkCore;
 using EntityFrameworkCoreMock;
-using Moq;
+using AutoFixture;
 
 namespace ContactsManager.Test
 {
     public class CountriesServiceTest
     {
         private readonly ICountriesService _countriesService;
+        private readonly IFixture _fixture;
 
         public CountriesServiceTest()
         {
-            List<Country> countries = new List<Country>()
-            {
+            _fixture = new Fixture();
 
-            };
+            List<Country> countries = new List<Country>() { };
 
             DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
                 new DbContextOptionsBuilder<ApplicationDbContext>().Options
@@ -49,10 +49,9 @@ namespace ContactsManager.Test
         [Fact]
         public async Task AddCountry_NullName()
         {
-            CountryAddRequest? request = new CountryAddRequest()
-            {
-                CountryName = null,
-            };
+            CountryAddRequest request = _fixture.Build<CountryAddRequest>()
+                .With(c => c.CountryName, value: null)
+                .Create();
 
             await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
@@ -64,19 +63,14 @@ namespace ContactsManager.Test
         [Fact]
         public async Task AddCountry_DuplicatedName()
         {
-            CountryAddRequest? request1 = new CountryAddRequest()
-            {
-                CountryName = "Costa Rica",
-            };
-            CountryAddRequest? request2 = new CountryAddRequest()
-            {
-                CountryName = "Costa Rica",
-            };
+            IEnumerable<CountryAddRequest> requests = _fixture.Build<CountryAddRequest>()
+                .With(c => c.CountryName, "Costa Rica")
+                .CreateMany(2);
 
             await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
-                await _countriesService.AddCountry(request1);
-                await _countriesService.AddCountry(request2);
+                await _countriesService.AddCountry(requests.First());
+                await _countriesService.AddCountry(requests.Last());
             });
         }
 
@@ -85,10 +79,7 @@ namespace ContactsManager.Test
         public async Task AddCountry_ProperName()
         {
             // Arrange
-            CountryAddRequest? request = new CountryAddRequest()
-            {
-                CountryName = "Canada",
-            };
+            CountryAddRequest request = _fixture.Create<CountryAddRequest>();
 
             // Act
             CountryResponse countryResponse = await _countriesService.AddCountry(request);
@@ -116,22 +107,7 @@ namespace ContactsManager.Test
         public async Task GetAllCountries_AddFewCountries()
         {
             // Arrange
-            List<CountryAddRequest> actualCountryList = new List<CountryAddRequest>()
-            {
-                new CountryAddRequest()
-                {
-                    CountryName = "Germany"
-                },
-                new CountryAddRequest()
-                {
-                    CountryName = "Canada"
-                },
-                new CountryAddRequest()
-                {
-                    CountryName = "Costa Rica"
-                },
-            };
-
+            IEnumerable<CountryAddRequest> actualCountryList = _fixture.CreateMany<CountryAddRequest>();
             List<CountryResponse> countryResponses = new List<CountryResponse>();
 
             // Act
@@ -170,10 +146,7 @@ namespace ContactsManager.Test
         public async Task GetCountryById_ProperId()
         {
             // Arrange
-            CountryAddRequest countryAddRequest = new CountryAddRequest()
-            {
-                CountryName = "Costa Rica",
-            };
+            CountryAddRequest countryAddRequest = _fixture.Create<CountryAddRequest>();
 
             // Act
             CountryResponse expectedResponse = await _countriesService.AddCountry(countryAddRequest);
