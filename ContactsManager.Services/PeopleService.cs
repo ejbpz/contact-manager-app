@@ -165,7 +165,6 @@ namespace ContactsManager.Services
             personToUpdate.IsReceivingNewsLetters = personUpdateRequest.IsReceivingNewsLetters;
             
             await _peopleDbContext.SaveChangesAsync();
-
             return personToUpdate.ToPersonResponse();
         }
 
