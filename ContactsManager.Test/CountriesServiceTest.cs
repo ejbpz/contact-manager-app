@@ -5,6 +5,7 @@ using ContactsManager.Services;
 using Microsoft.EntityFrameworkCore;
 using EntityFrameworkCoreMock;
 using AutoFixture;
+using FluentAssertions;
 
 namespace ContactsManager.Test
 {
@@ -38,11 +39,13 @@ namespace ContactsManager.Test
             CountryAddRequest? request = null;
 
             // Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            Func<Task> action = async () =>
             {
                 // Act
                 await _countriesService.AddCountry(request);
-            });
+            };
+
+            await action.Should().ThrowAsync<ArgumentNullException>();
         }
 
         // When the CountryName is null (ArgumentException).
@@ -53,10 +56,12 @@ namespace ContactsManager.Test
                 .With(c => c.CountryName, value: null)
                 .Create();
 
-            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            Func<Task> action = async () =>
             {
                 await _countriesService.AddCountry(request);
-            });
+            };
+
+            await action.Should().ThrowAsync<ArgumentException>();
         }
 
         // When the CountryName is duplicate (ArgumentException).
@@ -67,11 +72,13 @@ namespace ContactsManager.Test
                 .With(c => c.CountryName, "Costa Rica")
                 .CreateMany(2);
 
-            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            Func<Task> action = async () =>
             {
                 await _countriesService.AddCountry(requests.First());
                 await _countriesService.AddCountry(requests.Last());
-            });
+            };
+
+            await action.Should().ThrowAsync<ArgumentException>();
         }
 
         // When you supply proper CountryName (insert the country).
@@ -86,8 +93,8 @@ namespace ContactsManager.Test
             List<CountryResponse> actualAllProducts = await _countriesService.GetCountries();
 
             // Assert
-            Assert.True(countryResponse.CountryId != Guid.Empty);
-            Assert.Contains(countryResponse, actualAllProducts);
+            countryResponse.CountryId.Should().NotBe(Guid.Empty);
+            actualAllProducts.Should().Contain(countryResponse);
         }
         #endregion
 
@@ -100,7 +107,7 @@ namespace ContactsManager.Test
             List<CountryResponse> actualCountryList = await _countriesService.GetCountries();
 
             // Assert
-            Assert.Empty(actualCountryList);
+            actualCountryList.Should().BeEmpty();
         }
 
         [Fact]
@@ -119,10 +126,7 @@ namespace ContactsManager.Test
             List<CountryResponse> allCountries = await _countriesService.GetCountries();
 
             // Assert
-            foreach (CountryResponse expectedCountry in countryResponses)
-            {
-                Assert.Contains(expectedCountry, allCountries);
-            }
+            allCountries.Should().BeEquivalentTo(countryResponses);
         }
         #endregion
 
@@ -138,7 +142,7 @@ namespace ContactsManager.Test
             CountryResponse? countryResponse = await _countriesService.GetCountryByCountryId(countryId);
 
             // Assert
-            Assert.Null(countryResponse);
+            countryResponse.Should().BeNull();
         }
 
         // When we supply a valid CountryId, it should return a CountryResponse.
@@ -153,7 +157,7 @@ namespace ContactsManager.Test
             CountryResponse? countryResponse = await _countriesService.GetCountryByCountryId(expectedResponse.CountryId);
 
             // Assert
-            Assert.Equal(expectedResponse, countryResponse);
+            countryResponse.Should().Be(expectedResponse);
         }
         #endregion
     }

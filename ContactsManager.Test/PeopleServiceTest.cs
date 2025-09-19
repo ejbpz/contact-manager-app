@@ -1,12 +1,13 @@
-﻿using Xunit.Abstractions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
+using EntityFrameworkCoreMock;
+using AutoFixture;
+using FluentAssertions;
 using ContactsManager.Models;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services;
-using EntityFrameworkCoreMock;
-using AutoFixture;
 
 namespace ContactsManager.Test
 {
@@ -78,11 +79,13 @@ namespace ContactsManager.Test
             PersonAddRequest? personAddRequest = null;
 
             // Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            Func<Task> action = async () =>
             {
                 // Act
                 await _peopleService.AddPerson(personAddRequest);
-            });
+            };
+
+            await action.Should().ThrowAsync<ArgumentNullException>();
         }
 
         // When we supply a attribute (PersonName) null value (ArgumentException).
@@ -96,11 +99,13 @@ namespace ContactsManager.Test
                 .Create();
 
             // Assert
-            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            Func<Task> action = async () =>
             {
                 // Act
                 await _peopleService.AddPerson(personAddRequest);
-            });
+            };
+
+            await action.Should().ThrowAsync<ArgumentException>();
         }
 
         // When we supply a correct PersonAddRequest value and should be in the list of people.
@@ -120,8 +125,8 @@ namespace ContactsManager.Test
             listOfPeople = await _peopleService.GetPeople();
 
             // Assert
-            Assert.True(personRetrieved.PersonId != Guid.Empty);
-            Assert.Contains(personRetrieved, listOfPeople);
+            personRetrieved.PersonId.Should().NotBe(Guid.Empty);
+            listOfPeople.Should().Contain(personRetrieved);
         }
         #endregion
 
@@ -137,7 +142,7 @@ namespace ContactsManager.Test
             PersonResponse? personResponse = await _peopleService.GetPersonByPersonId(personId);
 
             // Assert
-            Assert.Null(personResponse);
+            personResponse.Should().BeNull();
         }
 
         // If we supply a valid personId, it should return a valid PersonResponse.
@@ -166,8 +171,7 @@ namespace ContactsManager.Test
             listOfPeople = await _peopleService.GetPeople();
 
             // Assert
-            Assert.Equal(personAdded, personSearched);
-            Assert.Contains(personSearched, listOfPeople);
+            personAdded.Should().Be(personSearched);
         }
         #endregion
 
@@ -183,7 +187,7 @@ namespace ContactsManager.Test
             listOfPeople = await _peopleService.GetPeople();
 
             // Assert
-            Assert.Empty(listOfPeople);
+            listOfPeople.Should().BeEmpty();
         }
 
         // We'll need to receive all the people which we added.
@@ -208,10 +212,7 @@ namespace ContactsManager.Test
             }
 
             // Assert
-            foreach (PersonResponse? personAdded in listOfPeopleAdded)
-            {
-                Assert.Contains(personAdded, listOfPeople);
-            }
+            listOfPeople.Should().BeEquivalentTo(listOfPeopleAdded);
         }
         #endregion
 
@@ -238,10 +239,7 @@ namespace ContactsManager.Test
             }
 
             // Assert
-            foreach (PersonResponse? personAdded in listOfPeopleAdded)
-            {
-                Assert.Contains(personAdded, listOfPeople);
-            }
+            listOfPeople.Should().BeEquivalentTo(listOfPeopleAdded);
         }
 
         // We'll add a few persons, then we are going to search based on name and a query.
@@ -266,16 +264,7 @@ namespace ContactsManager.Test
             }
 
             // Assert
-            foreach (PersonResponse? personAdded in listOfPeopleAdded)
-            {
-                if(personAdded.Gender is not null)
-                {
-                    if (personAdded.Gender.Contains("Other", StringComparison.OrdinalIgnoreCase))
-                    {
-                        Assert.Contains(personAdded, listOfPeople);
-                    }
-                }
-            }
+            listOfPeople.Should().OnlyContain(c => c.Gender == "Other");
         }
         #endregion
 
@@ -302,17 +291,7 @@ namespace ContactsManager.Test
                 _testOutputHelper.WriteLine(people.ToString());
             }
 
-            listOfPeopleAdded = listOfPeopleAdded.OrderByDescending(person => person.PersonName).ToList();
-            _testOutputHelper.WriteLine("\nPeople sorted (actual):");
-            foreach (PersonResponse? people in listOfPeopleAdded)
-            {
-                _testOutputHelper.WriteLine(people.ToString());
-            }
-            // Assert
-            for (int i = 0; i < listOfPeopleSorted.Count; i++)
-            {
-                Assert.Equal(listOfPeopleSorted[i], listOfPeopleAdded[i]);
-            }
+            listOfPeopleSorted.Should().BeInDescendingOrder(p => p.PersonName);
         }
         #endregion
 
@@ -325,11 +304,13 @@ namespace ContactsManager.Test
             PersonUpdateRequest? personUpdate = null;
 
             // Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            Func<Task> action = async () =>
             {
                 // Act
                 await _peopleService.UpdatePerson(personUpdate);
-            });
+            };
+
+            await action.Should().ThrowAsync<ArgumentNullException>();
         }
 
         // If we supply a null person id or not known id, should throw an exception (ArgumentException).
@@ -345,11 +326,13 @@ namespace ContactsManager.Test
                 .Create();
 
             // Assert
-            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            Func<Task> action = async () =>
             {
                 // Act
                 await _peopleService.UpdatePerson(personUpdate);
-            });
+            };
+
+            await action.Should().ThrowAsync<ArgumentException>();
         }
 
         // If we supply a null person name, should throw an exception (ArgumentException).
@@ -364,11 +347,13 @@ namespace ContactsManager.Test
             personUpdate.PersonName = null;
 
             // Assert
-            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            Func<Task> action = async () =>
             {
                 // Act
                 await _peopleService.UpdatePerson(personUpdate);
-            });
+            };
+
+            await action.Should().ThrowAsync<ArgumentException>();
         }
 
         // If we supply a null person name, should throw an exception (ArgumentException).
@@ -389,7 +374,7 @@ namespace ContactsManager.Test
             PersonResponse? personExpected = await _peopleService.GetPersonByPersonId(personResponse.PersonId);
 
             // Assert
-            Assert.Equal(personExpected, personResponse);
+            personExpected.Should().Be(personResponse);
         }
         #endregion
 
@@ -403,8 +388,8 @@ namespace ContactsManager.Test
             bool wasDeleted2 = await _peopleService.DeletePerson(null);
 
             // Assert
-            Assert.False(wasDeleted1);
-            Assert.False(wasDeleted2);
+            wasDeleted1.Should().BeFalse();
+            wasDeleted2.Should().BeFalse();
         }
 
         // If we supply a valid PersonId (exist), it should return true;
@@ -425,7 +410,7 @@ namespace ContactsManager.Test
             // Assert
             foreach (bool wasDeleted in wereDeleted)
             {
-                Assert.True(wasDeleted);
+                wasDeleted.Should().BeTrue();
             }
         }
         #endregion
