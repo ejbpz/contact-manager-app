@@ -1,5 +1,5 @@
 ﻿using ContactsManager.Models;
-using ContactsManager.RepositoryContracts;
+using ContactsManager.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContactsManager.Repositories

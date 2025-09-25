@@ -33,7 +33,7 @@ namespace ContactsManager.Repository
         /// </summary>
         /// <param name="predicate">LINQ expression to check.</param>
         /// <returns>Returns a list of people based on the expression or null.</returns>
-        Task<List<Person>?> GetFilteredPeople(Expression<Func<Person, bool>> predicate);
+        Task<List<Person>> GetFilteredPeople(Expression<Func<Person, bool>> predicate);
 
         /// <summary>
         /// Deletes a person object based on its ID.

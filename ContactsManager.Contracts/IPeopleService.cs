@@ -50,7 +50,7 @@ namespace ContactsManager.ServiceContracts
         /// </summary>
         /// <param name="personUpdateRequest">Person to be updated.</param>
         /// <returns>Returns the same person with its attributes updated.</returns>
-        Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest);
+        Task<PersonResponse?> UpdatePerson(PersonUpdateRequest? personUpdateRequest);
 
         /// <summary>
         /// Deletes a person using its id.

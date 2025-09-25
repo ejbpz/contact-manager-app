@@ -1,7 +1,7 @@
 ﻿using ContactsManager.Models;
+using ContactsManager.Repository;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
-using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
@@ -10,11 +10,11 @@ namespace ContactsManager.Services
 {
     public class CountriesService : ICountriesService
     {
-        private ApplicationDbContext _peopleDbContext;
+        private ICountriesRepository _countriesRepository;
 
-        public CountriesService(ApplicationDbContext peopleDbContext)
+        public CountriesService(ICountriesRepository countriesRepository)
         {
-            _peopleDbContext = peopleDbContext;
+            _countriesRepository = countriesRepository;
         }
 
         public async Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest)
@@ -23,27 +23,25 @@ namespace ContactsManager.Services
 
             if (countryAddRequest.CountryName is null) throw new ArgumentException(nameof(countryAddRequest.CountryName));
 
-            if(await _peopleDbContext.Countries.Where(country => country.CountryName == countryAddRequest.CountryName.Trim()).CountAsync() > 0) throw new ArgumentException("The country name given is already in the list.");
+            if (await _countriesRepository.GetCountryByCountryName(countryAddRequest.CountryName) is not null)  throw new ArgumentException("The country name given is already in the list.");
 
             Country newCountry = countryAddRequest.ToCountry();
-
             newCountry.CountryId = Guid.NewGuid();
-            _peopleDbContext.Countries.Add(newCountry);
-            await _peopleDbContext.SaveChangesAsync();
 
+            await _countriesRepository.AddCountry(newCountry);
             return newCountry.ToCountryResponse();
         }
 
         public async Task<List<CountryResponse>> GetCountries()
         {
-            return await _peopleDbContext.Countries.Select(c => c.ToCountryResponse()).ToListAsync();
+            return (await _countriesRepository.GetCountries()).Select(c => c.ToCountryResponse()).ToList();
         }
 
         public async Task<CountryResponse?> GetCountryByCountryId(Guid? countryId)
         {
-            if (countryId is null) return null;
+            if (countryId is null || !countryId.HasValue) return null;
 
-            Country? countryResponse = await _peopleDbContext.Countries.FirstOrDefaultAsync(country => country.CountryId.Equals(countryId));
+            var countryResponse = await _countriesRepository.GetCountryByCountryId(countryId.Value);
 
             if (countryResponse is null) return null;
 
@@ -69,13 +67,16 @@ namespace ContactsManager.Services
                     {
                         if(!string.IsNullOrEmpty(cellValue))
                         {
-                            CountryAddRequest countryAddRequest = new CountryAddRequest()
+                            if(await _countriesRepository.GetCountryByCountryName(cellValue) is null)
                             {
-                                CountryName = cellValue,
-                            };
+                                Country country = new Country()
+                                {
+                                    CountryName = cellValue,
+                                };
 
-                            await AddCountry(countryAddRequest);
-                            countriesAdded++;
+                                await _countriesRepository.AddCountry(country);
+                                countriesAdded++;
+                            }
                         }
                     } catch(Exception) {}
                 }

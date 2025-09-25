@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ContactsManager.Contracts\ContactsManager.ServiceContracts.csproj" />
+    <ProjectReference Include="..\ContactsManager.Repositories\ContactsManager.Repositories.csproj" />
   </ItemGroup>
 
 </Project>

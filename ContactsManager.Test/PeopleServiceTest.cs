@@ -34,8 +34,8 @@ namespace ContactsManager.Test
             dbContextMock.CreateDbSetMock<Country>(temp => temp.Countries, countries);
 
 
-            _countryService = new CountriesService(dbContext);
-            _peopleService = new PeopleService(dbContext);
+            _countryService = new CountriesService(null);
+            _peopleService = new PeopleService(null);
             _testOutputHelper = testOutputHelper;
         }
 
