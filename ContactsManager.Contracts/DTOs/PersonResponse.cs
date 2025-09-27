@@ -105,7 +105,5 @@ namespace ContactsManager.ServiceContracts.DTOs
                     : null,
             };
         }
-
-
     }
 }

@@ -36,5 +36,13 @@ namespace ContactsManager.ServiceContracts.DTOs
                 CountryName = country.CountryName,
             };
         }
+
+        public static CountryAddRequest ToCountryAddRequest(this Country country)
+        {
+            return new CountryAddRequest()
+            {
+                CountryName = country.CountryName
+            };
+        }
     }
 }

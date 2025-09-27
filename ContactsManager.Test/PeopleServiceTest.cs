@@ -5,20 +5,16 @@ using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services;
-using EntityFrameworkCoreMock;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using System.Linq.Expressions;
 using Xunit.Abstractions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ContactsManager.Test
 {
     public class PeopleServiceTest
     {
         private readonly IPeopleService _peopleService;
-        private readonly ICountriesService _countryService;
 
         private readonly Mock<IPeopleRepository> _mockPeopleRepository;
         private readonly IPeopleRepository _peopleRepository;
@@ -29,22 +25,10 @@ namespace ContactsManager.Test
         public PeopleServiceTest(ITestOutputHelper testOutputHelper)
         {
             _fixture = new Fixture();
+            
             _mockPeopleRepository = new Mock<IPeopleRepository>();
             _peopleRepository = _mockPeopleRepository.Object;
 
-            //List<Person> people = new List<Person>() { };
-            //List<Country> countries = new List<Country>() { };
-
-            //DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
-            //    new DbContextOptionsBuilder<ApplicationDbContext>().Options
-            //);
-
-            //ApplicationDbContext dbContext = dbContextMock.Object;
-            //dbContextMock.CreateDbSetMock<Person>(temp => temp.People, people);
-            //dbContextMock.CreateDbSetMock<Country>(temp => temp.Countries, countries);
-
-
-            _countryService = new CountriesService(null);
             _peopleService = new PeopleService(_peopleRepository);
             _testOutputHelper = testOutputHelper;
         }
