@@ -144,6 +144,8 @@ namespace ContactsManager.Services
         {
             if (personUpdateRequest is null) throw new ArgumentNullException(nameof(personUpdateRequest));
 
+            if (personUpdateRequest.PersonId == Guid.Empty) throw new ArgumentException("The person Id is null.");
+
             ValidationHelper.ModelValidation(personUpdateRequest);
 
             return (await _peopleRepository.UpdatePerson(personUpdateRequest.ToPerson())).ToPersonResponse();
@@ -151,7 +153,7 @@ namespace ContactsManager.Services
 
         public async Task<bool> DeletePerson(Guid? personId)
         {
-            if (personId is null) return false;
+            if (personId is null || personId.Value == Guid.Empty) return false;
 
             return await _peopleRepository.DeletePersonByPersonId(personId.Value);
         }
