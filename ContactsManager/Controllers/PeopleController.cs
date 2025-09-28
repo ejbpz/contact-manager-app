@@ -61,7 +61,7 @@ namespace ContactsManager.Controllers
                 CallingGenders();
                 await CallingCountries();
 
-                return View();
+                return View(personAddRequest);
             }
             await _peopleService.AddPerson(personAddRequest);
             TempData["NewUser"] = $"{personAddRequest?.PersonName ?? "New person"} has been succesfully added.";
@@ -84,27 +84,26 @@ namespace ContactsManager.Controllers
         [HttpPost("edit-person/{personId}")]
         public async Task<IActionResult> Edit(PersonUpdateRequest personUpdateRequest)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    await _peopleService.UpdatePerson(personUpdateRequest);
-                    TempData["NewUser"] = $"{personUpdateRequest?.PersonName ?? "Person"} has been succesfully updated.";
-                    return RedirectToAction("Index", "People");
-                }
+                CallingGenders();
+                await CallingCountries();
+
+                return View(personUpdateRequest);
             }
-            catch (Exception) { }
-
-            CallingGenders();
-            await CallingCountries();
-
-            return View(personUpdateRequest);
+            
+            await _peopleService.UpdatePerson(personUpdateRequest);
+            TempData["NewUser"] = $"{personUpdateRequest?.PersonName ?? "Person"} has been succesfully updated.";
+            return RedirectToAction("Index", "People");
         }
 
         [HttpGet("delete-view/{personId}")]
         public async Task<IActionResult> DeleteView(Guid? personId)
         {
             PersonResponse? personResponse = await _peopleService.GetPersonByPersonId(personId);
+
+            if (personResponse is null) return RedirectToAction("Index", "People");
+
             return PartialView("_Delete", personResponse);
         }
 
