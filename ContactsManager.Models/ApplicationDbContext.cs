@@ -1,6 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 using System.Text.Json;
 
 namespace ContactsManager.Models
@@ -58,6 +57,7 @@ namespace ContactsManager.Models
 
         private List<Country> ExtractCountriesFormJson()
         {
+            string path = Path.Combine();
             string countriesJson = File.ReadAllText("wwwroot/seed-data/countries.json");
             return JsonSerializer.Deserialize<List<Country>>(countriesJson)!;
         }
