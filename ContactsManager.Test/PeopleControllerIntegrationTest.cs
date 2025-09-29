@@ -1,5 +1,6 @@
-﻿using FluentAssertions;
-using System.Runtime.CompilerServices;
+﻿using Fizzler.Systems.HtmlAgilityPack;
+using FluentAssertions;
+using HtmlAgilityPack;
 
 namespace ContactsManager.Test
 {
@@ -21,6 +22,13 @@ namespace ContactsManager.Test
 
             // Assert
             httpResponse.IsSuccessStatusCode.Should().BeTrue();
+            
+            string responseBody = await httpResponse.Content.ReadAsStringAsync();
+            HtmlDocument htmlDocument = new HtmlDocument();
+            htmlDocument.LoadHtml(responseBody);
+
+            var document = htmlDocument.DocumentNode;
+            document.QuerySelector(".people").Should().NotBeNull();
         }
         #endregion
     }

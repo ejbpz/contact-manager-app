@@ -37,7 +37,7 @@
     </div>
 
     <div class="mt-3 flex max-h-[500px] w-full justify-around overflow-auto rounded-tl-xl bg-white p-4 shadow-lg sm:max-h-[650px]">
-        <table class="w-full max-w-1/2 min-w-[980px]">
+        <table class="w-full max-w-1/2 min-w-[980px] people">
             <thead>
                 <tr class="border-[#43A490] border-b-[1px]">
                     @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData) { { "NameOf", nameof(PersonResponse.PersonName) }, { "HeaderName", "Name" } })
