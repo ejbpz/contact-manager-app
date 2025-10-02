@@ -15,9 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ContactsManager.Contracts\ContactsManager.ServiceContracts.csproj" />
     <ProjectReference Include="..\ContactsManager.Repositories\ContactsManager.Repositories.csproj" />
-    <ProjectReference Include="..\ContactsManager.Repository\ContactsManager.RepositoryContracts.csproj" />
     <ProjectReference Include="..\ContactsManager.Services\ContactsManager.Services.csproj" />
   </ItemGroup>
 

@@ -1,7 +1,5 @@
 ﻿using ContactsManager.Models;
 using ContactsManager.ServiceContracts.Enums;
-using System.Net;
-using System.Reflection;
 
 namespace ContactsManager.ServiceContracts.DTOs
 {

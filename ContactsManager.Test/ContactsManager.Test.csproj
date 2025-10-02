@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ContactsManager.Contracts\ContactsManager.ServiceContracts.csproj" />
-    <ProjectReference Include="..\ContactsManager.Services\ContactsManager.Services.csproj" />
+    <ProjectReference Include="..\ContactsManager.RepositoryContracts\ContactsManager.RepositoryContracts.csproj" />
+    <ProjectReference Include="..\ContactsManager.ServiceContracts\ContactsManager.ServiceContracts.csproj" />
     <ProjectReference Include="..\ContactsManager\ContactsManager.csproj" />
   </ItemGroup>
 

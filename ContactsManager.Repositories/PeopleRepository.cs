@@ -1,5 +1,5 @@
 ﻿using ContactsManager.Models;
-using ContactsManager.Repository;
+using ContactsManager.RepositoryContracts;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -30,7 +30,7 @@ namespace ContactsManager.Repositories
             return true;
         }
 
-        public async Task<List<Person>> GetFilteredPeople(Expression<Func<Person, bool>> predicate)
+        public async Task<List<Person>?> GetFilteredPeople(Expression<Func<Person, bool>> predicate)
         {
             return await _context.People
                 .Include("Country")

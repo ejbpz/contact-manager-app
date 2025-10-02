@@ -34,7 +34,7 @@ namespace ContactsManager.ServiceContracts
         /// <param name="searchBy">Filter to seach people.</param>
         /// <param name="query">Text to search.</param>
         /// <returns>Returns a list of people that match with the query.</returns>
-        Task<List<PersonResponse>> GetFilteredPeople(string searchBy, string? query);
+        Task<List<PersonResponse>?> GetFilteredPeople(string searchBy, string? query);
 
         /// <summary>
         /// Sort a group of people by user preferences.

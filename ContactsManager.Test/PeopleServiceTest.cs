@@ -1,14 +1,14 @@
-﻿using AutoFixture;
+﻿using System.Linq.Expressions;
+using Moq;
+using AutoFixture;
+using FluentAssertions;
+using Xunit.Abstractions;
 using ContactsManager.Models;
-using ContactsManager.Repository;
+using ContactsManager.Services;
 using ContactsManager.ServiceContracts;
+using ContactsManager.RepositoryContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
-using ContactsManager.Services;
-using FluentAssertions;
-using Moq;
-using System.Linq.Expressions;
-using Xunit.Abstractions;
 
 namespace ContactsManager.Test
 {

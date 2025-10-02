@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ContactsManager.Models;
 using ContactsManager.Services;
-using ContactsManager.Repository;
+using ContactsManager.RepositoryContracts;
 using ContactsManager.Repositories;
 using ContactsManager.ServiceContracts;
 

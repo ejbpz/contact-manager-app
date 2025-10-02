@@ -1,6 +1,5 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using System.Globalization;
 using ContactsManager.Models;
@@ -8,7 +7,7 @@ using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services.Helpers;
-using ContactsManager.Repository;
+using ContactsManager.RepositoryContracts;
 
 namespace ContactsManager.Services
 {
@@ -50,9 +49,9 @@ namespace ContactsManager.Services
             return person.ToPersonResponse();
         }
 
-        public async Task<List<PersonResponse>> GetFilteredPeople(string searchBy, string? query)
+        public async Task<List<PersonResponse>?> GetFilteredPeople(string searchBy, string? query)
         {
-            List<Person> matchingPeople = searchBy switch
+            List<Person>? matchingPeople = searchBy switch
             {
                 nameof(PersonResponse.PersonName) =>
                     await _peopleRepository.GetFilteredPeople((person =>
@@ -100,7 +99,7 @@ namespace ContactsManager.Services
                     await _peopleRepository.GetPeople()
             };
 
-            return matchingPeople.Select(p => p.ToPersonResponse()).ToList();
+            return matchingPeople?.Select(p => p.ToPersonResponse()).ToList();
         }
 
         public List<PersonResponse> GetSortedPeople(List<PersonResponse> allPeople, string sortBy, SortOrderOptions sortOrder)

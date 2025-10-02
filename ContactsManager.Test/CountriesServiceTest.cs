@@ -4,7 +4,7 @@ using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.Services;
 using AutoFixture;
 using FluentAssertions;
-using ContactsManager.Repository;
+using ContactsManager.RepositoryContracts;
 using Moq;
 
 namespace ContactsManager.Test

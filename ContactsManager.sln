@@ -9,11 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.Test", "Con
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.Models", "ContactsManager.Models\ContactsManager.Models.csproj", "{93BB2395-3A4D-442F-A2E7-92964C1BD766}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.ServiceContracts", "ContactsManager.Contracts\ContactsManager.ServiceContracts.csproj", "{C3DD5DEF-B7AC-42AD-8C75-355F137FB849}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.ServiceContracts", "ContactsManager.ServiceContracts\ContactsManager.ServiceContracts.csproj", "{C3DD5DEF-B7AC-42AD-8C75-355F137FB849}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.Services", "ContactsManager.Services\ContactsManager.Services.csproj", "{4148711C-1DAE-4747-9255-829D1FA2C761}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.RepositoryContracts", "ContactsManager.Repository\ContactsManager.RepositoryContracts.csproj", "{86C38302-9FE2-4AFB-9FD5-61A7B2E8F780}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.RepositoryContracts", "ContactsManager.RepositoryContracts\ContactsManager.RepositoryContracts.csproj", "{86C38302-9FE2-4AFB-9FD5-61A7B2E8F780}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContactsManager.Repositories", "ContactsManager.Repositories\ContactsManager.Repositories.csproj", "{87D7F383-2196-427E-BCE3-8C6038DB5796}"
 EndProject
