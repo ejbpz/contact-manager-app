@@ -7,11 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Rotativa.AspNetCore" Version="1.4.0" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.2.2" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,5 +29,9 @@
 
 	<ItemGroup>
 		<Content Update="wwwroot\seed-data\countries.json" CopyToOutputDirectory="Always" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="logs\" />
 	</ItemGroup>
 </Project>

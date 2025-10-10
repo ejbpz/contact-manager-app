@@ -14,26 +14,36 @@ namespace ContactsManager.Controllers
     {
         private readonly IPeopleService _peopleService;
         private readonly ICountriesService _countriesService;
+        private readonly ILogger<PeopleController> _logger;
 
-        public PeopleController(IPeopleService peopleService, ICountriesService countriesService)
+        public PeopleController(IPeopleService peopleService, 
+                                ICountriesService countriesService,
+                                ILogger<PeopleController> logger)
         {
             _peopleService = peopleService;
             _countriesService = countriesService;
+            _logger = logger;
         }
 
         [HttpGet("")]
         public async Task<IActionResult> Index(string searchBy, string? searchQuery, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrderOptions = SortOrderOptions.Ascending)
         {
+            _logger.LogInformation("Index action method of PeopleController.");
+            _logger.LogDebug($"searchBy: {searchBy}");
+            _logger.LogDebug($"searchQuery: {searchQuery}");
+            _logger.LogDebug($"sortBy: {sortBy}");
+            _logger.LogDebug($"sortOrderOptions: {sortOrderOptions}");
+
             // Searching
             CreateColumns();
 
-            List<PersonResponse> allPeople = await _peopleService.GetFilteredPeople(searchBy, searchQuery);
+            List<PersonResponse>? allPeople = await _peopleService.GetFilteredPeople(searchBy, searchQuery);
 
             ViewBag.CurrentSearchBy = searchBy;
             ViewBag.CurrentSearchQuery = searchQuery;
 
             // Sorting
-            allPeople = _peopleService.GetSortedPeople(allPeople, sortBy, sortOrderOptions);
+            allPeople = _peopleService.GetSortedPeople(allPeople ?? new List<PersonResponse>(), sortBy, sortOrderOptions);
 
             ViewBag.CurrentSortBy = sortBy;
             ViewBag.CurrentSortOrder = sortOrderOptions;

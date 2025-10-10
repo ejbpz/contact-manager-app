@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿using Microsoft.Extensions.Logging;
+using CsvHelper;
 using CsvHelper.Configuration;
 using OfficeOpenXml;
 using System.Globalization;
@@ -14,10 +15,12 @@ namespace ContactsManager.Services
     public class PeopleService : IPeopleService
     {
         private readonly IPeopleRepository _peopleRepository;
+        private readonly ILogger<PeopleService> _logger;
 
-        public PeopleService(IPeopleRepository peopleRepository)
+        public PeopleService(IPeopleRepository peopleRepository, ILogger<PeopleService> logger)
         {
             _peopleRepository = peopleRepository;
+            _logger = logger;
         }
 
         public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
@@ -36,6 +39,7 @@ namespace ContactsManager.Services
 
         public async Task<List<PersonResponse>> GetPeople()
         {
+            _logger.LogInformation("GetPeople of PeopleService.");
             return (await _peopleRepository.GetPeople()).Select(p => p.ToPersonResponse()).ToList();
         }
 
@@ -51,6 +55,7 @@ namespace ContactsManager.Services
 
         public async Task<List<PersonResponse>?> GetFilteredPeople(string searchBy, string? query)
         {
+            _logger.LogInformation("GetFilteredPeople of PeopleService.");
             List<Person>? matchingPeople = searchBy switch
             {
                 nameof(PersonResponse.PersonName) =>
@@ -104,6 +109,7 @@ namespace ContactsManager.Services
 
         public List<PersonResponse> GetSortedPeople(List<PersonResponse> allPeople, string sortBy, SortOrderOptions sortOrder)
         {
+            _logger.LogInformation("GetSortedPeople of PeopleService.");
             if (string.IsNullOrEmpty(sortBy)) return allPeople;
 
             List<PersonResponse> sortedPeople = (sortBy, sortOrder)

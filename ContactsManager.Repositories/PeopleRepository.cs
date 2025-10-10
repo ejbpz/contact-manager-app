@@ -1,6 +1,7 @@
 ﻿using ContactsManager.Models;
 using ContactsManager.RepositoryContracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
 namespace ContactsManager.Repositories
@@ -8,10 +9,12 @@ namespace ContactsManager.Repositories
     public class PeopleRepository : IPeopleRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger<PeopleRepository> _logger;
 
-        public PeopleRepository(ApplicationDbContext context)
+        public PeopleRepository(ApplicationDbContext context, ILogger<PeopleRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<Person> AddPerson(Person person)
@@ -32,6 +35,7 @@ namespace ContactsManager.Repositories
 
         public async Task<List<Person>?> GetFilteredPeople(Expression<Func<Person, bool>> predicate)
         {
+            _logger.LogInformation("GetFilteredPeople of PeopleRepository.");
             return await _context.People
                 .Include("Country")
                 .Where(predicate)
@@ -40,6 +44,8 @@ namespace ContactsManager.Repositories
 
         public async Task<List<Person>> GetPeople()
         {
+
+            _logger.LogInformation("GetPeople of PeopleRepository.");
             return await _context.People
                 .Include("Country")
                 .ToListAsync();
