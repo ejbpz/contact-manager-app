@@ -47,6 +47,7 @@ if (builder.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+app.UseSerilogRequestLogging();
 app.UseHttpLogging();
 app.UseStaticFiles();
 app.UseRouting();

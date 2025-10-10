@@ -35,5 +35,10 @@ namespace ContactsManager.Models
 
         [ForeignKey("CountryId")]
         public Country? Country { get; set; }
+
+        public override string ToString()
+        {
+            return $"PersonId: {PersonId}\nPersonName: {PersonName}\nPersonEmail: {PersonEmail}\nDateOfBirth: {DateOfBirth?.ToString("d")}\nGender: {Gender}\nCountryId: {CountryId}\nCountry: {Country?.CountryName}\nAddress: {Address}\nIsReceivingNewsLetters: {IsReceivingNewsLetters}\n\n";
+        }
     }
 }

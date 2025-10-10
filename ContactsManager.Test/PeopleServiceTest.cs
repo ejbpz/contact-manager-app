@@ -1,14 +1,16 @@
-﻿using System.Linq.Expressions;
-using Moq;
-using AutoFixture;
-using FluentAssertions;
-using Xunit.Abstractions;
+﻿using AutoFixture;
 using ContactsManager.Models;
-using ContactsManager.Services;
-using ContactsManager.ServiceContracts;
 using ContactsManager.RepositoryContracts;
+using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
+using ContactsManager.Services;
+using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
+using Serilog;
+using System.Linq.Expressions;
+using Xunit.Abstractions;
 
 namespace ContactsManager.Test
 {
@@ -18,6 +20,12 @@ namespace ContactsManager.Test
 
         private readonly Mock<IPeopleRepository> _mockPeopleRepository;
         private readonly IPeopleRepository _peopleRepository;
+
+        private readonly Mock<ILogger<PeopleService>> _mockLoggerPeopleService;
+        private readonly ILogger<PeopleService> _loggerPeopleService;
+
+        private readonly Mock<IDiagnosticContext> _mockDiagnosticContext;
+        private readonly IDiagnosticContext _diagnosticContext;
 
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly IFixture _fixture;
@@ -29,7 +37,13 @@ namespace ContactsManager.Test
             _mockPeopleRepository = new Mock<IPeopleRepository>();
             _peopleRepository = _mockPeopleRepository.Object;
 
-            _peopleService = new PeopleService(_peopleRepository);
+            _mockDiagnosticContext = new Mock<IDiagnosticContext>();
+            _diagnosticContext = _mockDiagnosticContext.Object;
+
+            _mockLoggerPeopleService = new Mock<ILogger<PeopleService>>();
+            _loggerPeopleService = _mockLoggerPeopleService.Object;
+
+            _peopleService = new PeopleService(_peopleRepository, _loggerPeopleService, _diagnosticContext);
             _testOutputHelper = testOutputHelper;
         }
 

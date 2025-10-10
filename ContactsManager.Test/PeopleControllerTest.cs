@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
@@ -21,6 +22,9 @@ namespace ContactsManager.Test
         private readonly Mock<IPeopleService> _mockPeopleService;
         private readonly Mock<ICountriesService> _mockCountriesService;
 
+        private readonly Mock<ILogger<PeopleController>> _mockLoggerPeopleController;
+        private readonly ILogger<PeopleController> _loggerPeopleController;
+
         private readonly Fixture _fixture;
 
         public PeopleControllerTest()
@@ -29,9 +33,11 @@ namespace ContactsManager.Test
 
             _mockPeopleService = new Mock<IPeopleService>();
             _mockCountriesService = new Mock<ICountriesService>();
+            _mockLoggerPeopleController = new Mock<ILogger<PeopleController>>();
 
             _peopleService = _mockPeopleService.Object;
             _countriesService = _mockCountriesService.Object;
+            _loggerPeopleController = _mockLoggerPeopleController.Object;
         }
 
         #region Index
@@ -41,7 +47,7 @@ namespace ContactsManager.Test
             // Arrange
             List<PersonResponse> people = _fixture.Create<List<PersonResponse>>();
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
             peopleController.TempData = tempData;
@@ -79,7 +85,7 @@ namespace ContactsManager.Test
                 .GetCountries())
                 .ReturnsAsync(countries);
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             // Act
             var result = await peopleController.Create();
@@ -100,7 +106,7 @@ namespace ContactsManager.Test
                 .Create();
             List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
             peopleController.TempData = tempData;
@@ -128,7 +134,7 @@ namespace ContactsManager.Test
             PersonAddRequest personAddRequest = _fixture.Create<PersonAddRequest>();
             PersonResponse personResponse = personAddRequest.ToPerson().ToPersonResponse();
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
             peopleController.TempData = tempData;
@@ -166,7 +172,7 @@ namespace ContactsManager.Test
                 .GetPersonByPersonId(It.IsAny<Guid>()))
                 .ReturnsAsync(person.ToPersonResponse());
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             // Act
             var result = await peopleController.Edit(person.PersonId);
@@ -191,7 +197,7 @@ namespace ContactsManager.Test
                 .GetPersonByPersonId(It.IsAny<Guid>()))
                 .ReturnsAsync(null as PersonResponse);
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             // Act
             var result = await peopleController.Edit(Guid.NewGuid());
@@ -214,7 +220,7 @@ namespace ContactsManager.Test
                 .GetCountries())
                 .ReturnsAsync(countries);
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
             
             peopleController.ModelState.AddModelError(nameof(PersonAddRequest.PersonName), "Person name cannot be blank.");
 
@@ -240,7 +246,7 @@ namespace ContactsManager.Test
 
             var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
             peopleController.TempData = tempData;
 
             // Act
@@ -265,7 +271,7 @@ namespace ContactsManager.Test
                 .GetPersonByPersonId(It.IsAny<Guid>()))
                 .ReturnsAsync(personResponse);
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             // Act
             var result = await peopleController.DeleteView(personResponse.PersonId);
@@ -287,7 +293,7 @@ namespace ContactsManager.Test
                 .GetPersonByPersonId(It.IsAny<Guid>()))
                 .ReturnsAsync(null as PersonResponse);
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             // Act
             var result = await peopleController.DeleteView(Guid.NewGuid());
@@ -315,7 +321,7 @@ namespace ContactsManager.Test
 
             var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
             peopleController.TempData = tempData;
 
             // Act
@@ -346,7 +352,7 @@ namespace ContactsManager.Test
 
             var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService);
+            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
             peopleController.TempData = tempData;
 
             // Act

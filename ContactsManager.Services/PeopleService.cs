@@ -3,12 +3,14 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using OfficeOpenXml;
 using System.Globalization;
+using Serilog;
 using ContactsManager.Models;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services.Helpers;
 using ContactsManager.RepositoryContracts;
+using SerilogTimings;
 
 namespace ContactsManager.Services
 {
@@ -16,11 +18,13 @@ namespace ContactsManager.Services
     {
         private readonly IPeopleRepository _peopleRepository;
         private readonly ILogger<PeopleService> _logger;
+        private readonly IDiagnosticContext _diagnosticContext;
 
-        public PeopleService(IPeopleRepository peopleRepository, ILogger<PeopleService> logger)
+        public PeopleService(IPeopleRepository peopleRepository, ILogger<PeopleService> logger, IDiagnosticContext diagnosticContext)
         {
             _peopleRepository = peopleRepository;
             _logger = logger;
+            _diagnosticContext = diagnosticContext;
         }
 
         public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
@@ -56,53 +60,60 @@ namespace ContactsManager.Services
         public async Task<List<PersonResponse>?> GetFilteredPeople(string searchBy, string? query)
         {
             _logger.LogInformation("GetFilteredPeople of PeopleService.");
-            List<Person>? matchingPeople = searchBy switch
+            List<Person>? matchingPeople = new List<Person>();
+
+            using (Operation.Time("Time for GetFilteredPeople get data from DB."))
             {
-                nameof(PersonResponse.PersonName) =>
-                    await _peopleRepository.GetFilteredPeople((person =>
-                        (!string.IsNullOrEmpty(person.PersonName))
-                            ? person.PersonName.Contains(query ?? "")
-                            : true
-                    )),
+                matchingPeople = searchBy switch
+                {
+                    nameof(PersonResponse.PersonName) =>
+                        await _peopleRepository.GetFilteredPeople((person =>
+                            (!string.IsNullOrEmpty(person.PersonName))
+                                ? person.PersonName.Contains(query ?? "")
+                                : true
+                        )),
 
-                nameof(PersonResponse.PersonEmail) =>
-                    await _peopleRepository.GetFilteredPeople(person =>
-                        (!string.IsNullOrEmpty(person.PersonEmail))
-                            ? person.PersonEmail.Contains(query ?? "")
-                            : true
-                    ),
+                    nameof(PersonResponse.PersonEmail) =>
+                        await _peopleRepository.GetFilteredPeople(person =>
+                            (!string.IsNullOrEmpty(person.PersonEmail))
+                                ? person.PersonEmail.Contains(query ?? "")
+                                : true
+                        ),
 
-                nameof(PersonResponse.DateOfBirth) =>
-                    await _peopleRepository.GetFilteredPeople(person =>
-                        (!string.IsNullOrEmpty(person.DateOfBirth.ToString()))
-                            ? person.DateOfBirth!.Value.ToString("dd MMMM yyyy").Contains(query ?? "")
-                            : true
-                    ),
+                    nameof(PersonResponse.DateOfBirth) =>
+                        await _peopleRepository.GetFilteredPeople(person =>
+                            (!string.IsNullOrEmpty(person.DateOfBirth.ToString()))
+                                ? person.DateOfBirth!.Value.ToString("dd MMMM yyyy").Contains(query ?? "")
+                                : true
+                        ),
 
-                nameof(PersonResponse.Gender) =>
-                    await _peopleRepository.GetFilteredPeople(person =>
-                        (!string.IsNullOrEmpty(person.Gender))
-                            ? person.Gender.Equals(query)
-                            : true
-                    ),
+                    nameof(PersonResponse.Gender) =>
+                        await _peopleRepository.GetFilteredPeople(person =>
+                            (!string.IsNullOrEmpty(person.Gender))
+                                ? person.Gender.Equals(query)
+                                : true
+                        ),
 
-                nameof(PersonResponse.CountryName) =>
-                    await _peopleRepository.GetFilteredPeople(person =>
-                        (!string.IsNullOrEmpty(person.Country!.CountryName))
-                            ? person.Country.CountryName.Contains(query ?? "")
-                            : true
-                    ),
+                    nameof(PersonResponse.CountryName) =>
+                        await _peopleRepository.GetFilteredPeople(person =>
+                            (!string.IsNullOrEmpty(person.Country!.CountryName))
+                                ? person.Country.CountryName.Contains(query ?? "")
+                                : true
+                        ),
 
-                nameof(PersonResponse.Address) =>
-                    await _peopleRepository.GetFilteredPeople(person =>
-                        (!string.IsNullOrEmpty(person.Address))
-                            ? person.Address.Contains(query ?? "")
-                            : true
-                    ),
+                    nameof(PersonResponse.Address) =>
+                        await _peopleRepository.GetFilteredPeople(person =>
+                            (!string.IsNullOrEmpty(person.Address))
+                                ? person.Address.Contains(query ?? "")
+                                : true
+                        ),
 
-                _ =>
-                    await _peopleRepository.GetPeople()
-            };
+                    _ =>
+                        await _peopleRepository.GetPeople()
+                };
+            }
+
+            _diagnosticContext.Set("People", matchingPeople ?? new List<Person>());
 
             return matchingPeople?.Select(p => p.ToPersonResponse()).ToList();
         }
