@@ -21,8 +21,9 @@ builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, 
 // Views to Controller
 builder.Services.AddControllersWithViews(options =>
 {
-    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
-    options.Filters.Add(new ResponseHeaderActionFilter(logger, "my-global-key", "my-global-value"));
+    //options.Filters.Add<PeopleListActionFilter>(5);
+   var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
+    options.Filters.Add(new ResponseHeaderActionFilter(logger, "my-global-key", "my-global-value", 2));
 });
 
 // Services

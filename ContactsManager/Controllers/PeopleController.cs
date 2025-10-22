@@ -13,8 +13,8 @@ namespace ContactsManager.Controllers
     [Route("people")]
     [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]
     {
-        "my-controller-key", "my-controller-value"
-    }, Order = 1)]
+        "my-controller-key", "my-controller-value", 3
+    }, Order = 3)]
     public class PeopleController : Controller
     {
         private readonly IPeopleService _peopleService;
@@ -31,11 +31,11 @@ namespace ContactsManager.Controllers
         }
 
         [HttpGet("")]
-        [TypeFilter(typeof(PeopleListActionFilter))]
         [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]
         {
-            "my-method-key", "my-method-value"
-        }, Order = 2)]
+            "my-method-key", "my-method-value", 1
+        }, Order = 1)]
+        [TypeFilter(typeof(PeopleListActionFilter), Order = 4)]
         public async Task<IActionResult> Index(string searchBy, string? searchQuery, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrderOptions = SortOrderOptions.Ascending)
         {
             _logger.LogInformation("Index action method of PeopleController.");
@@ -67,17 +67,11 @@ namespace ContactsManager.Controllers
 
         //<form action = "~/people/new-person" method="post">
         [HttpPost("new-person")]
-        public async Task<IActionResult> Create(PersonAddRequest? personAddRequest)
+        [TypeFilter(typeof(PersonCreateAndEditActionFilter))]
+        public async Task<IActionResult> Create(PersonAddRequest? personRequest)
         {
-            if(!ModelState.IsValid)
-            {
-                CallingGenders();
-                await CallingCountries();
-
-                return View(personAddRequest);
-            }
-            await _peopleService.AddPerson(personAddRequest);
-            TempData["NewUser"] = $"{personAddRequest?.PersonName ?? "New person"} has been succesfully added.";
+            await _peopleService.AddPerson(personRequest);
+            TempData["NewUser"] = $"{personRequest?.PersonName ?? "New person"} has been succesfully added.";
             return RedirectToAction("Index", "People");
         }
 
@@ -95,18 +89,11 @@ namespace ContactsManager.Controllers
         }
 
         [HttpPost("edit-person/{personId}")]
-        public async Task<IActionResult> Edit(PersonUpdateRequest personUpdateRequest)
+        [TypeFilter(typeof(PersonCreateAndEditActionFilter))]
+        public async Task<IActionResult> Edit(PersonUpdateRequest personRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                CallingGenders();
-                await CallingCountries();
-
-                return View(personUpdateRequest);
-            }
-            
-            await _peopleService.UpdatePerson(personUpdateRequest);
-            TempData["NewUser"] = $"{personUpdateRequest?.PersonName ?? "Person"} has been succesfully updated.";
+            await _peopleService.UpdatePerson(personRequest);
+            TempData["NewUser"] = $"{personRequest?.PersonName ?? "Person"} has been succesfully updated.";
             return RedirectToAction("Index", "People");
         }
 
