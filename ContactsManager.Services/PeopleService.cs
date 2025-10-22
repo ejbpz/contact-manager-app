@@ -1,16 +1,16 @@
-﻿using Microsoft.Extensions.Logging;
-using CsvHelper;
-using CsvHelper.Configuration;
-using OfficeOpenXml;
-using System.Globalization;
+﻿using System.Globalization;
+using Microsoft.Extensions.Logging;
 using Serilog;
+using CsvHelper;
+using OfficeOpenXml;
+using SerilogTimings;
+using CsvHelper.Configuration;
 using ContactsManager.Models;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services.Helpers;
 using ContactsManager.RepositoryContracts;
-using SerilogTimings;
 
 namespace ContactsManager.Services
 {
@@ -83,7 +83,7 @@ namespace ContactsManager.Services
                     nameof(PersonResponse.DateOfBirth) =>
                         await _peopleRepository.GetFilteredPeople(person =>
                             (!string.IsNullOrEmpty(person.DateOfBirth.ToString()))
-                                ? person.DateOfBirth!.Value.ToString("dd MMMM yyyy").Contains(query ?? "")
+                                ? person.DateOfBirth!.Value.ToString().Contains(query ?? "")
                                 : true
                         ),
 

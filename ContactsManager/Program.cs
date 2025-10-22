@@ -6,6 +6,7 @@ using ContactsManager.Services;
 using ContactsManager.Repositories;
 using ContactsManager.ServiceContracts;
 using ContactsManager.RepositoryContracts;
+using ContactsManager.Filters.ActionFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,11 @@ builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, 
 });
 
 // Views to Controller
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
+    options.Filters.Add(new ResponseHeaderActionFilter(logger, "my-global-key", "my-global-value"));
+});
 
 // Services
 builder.Services.AddHttpLogging(options =>

@@ -1,15 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Rotativa.AspNetCore;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Rotativa.AspNetCore;
+using ContactsManager.Filters.ActionFilters;
 
 namespace ContactsManager.Controllers
 {
     [Controller]
     [Route("/")]
     [Route("people")]
+    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]
+    {
+        "my-controller-key", "my-controller-value"
+    }, Order = 1)]
     public class PeopleController : Controller
     {
         private readonly IPeopleService _peopleService;
@@ -26,6 +31,11 @@ namespace ContactsManager.Controllers
         }
 
         [HttpGet("")]
+        [TypeFilter(typeof(PeopleListActionFilter))]
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]
+        {
+            "my-method-key", "my-method-value"
+        }, Order = 2)]
         public async Task<IActionResult> Index(string searchBy, string? searchQuery, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrderOptions = SortOrderOptions.Ascending)
         {
             _logger.LogInformation("Index action method of PeopleController.");
@@ -35,18 +45,11 @@ namespace ContactsManager.Controllers
             _logger.LogDebug($"sortOrderOptions: {sortOrderOptions}");
 
             // Searching
-            CreateColumns();
-
             List<PersonResponse>? allPeople = await _peopleService.GetFilteredPeople(searchBy, searchQuery);
-
-            ViewBag.CurrentSearchBy = searchBy;
-            ViewBag.CurrentSearchQuery = searchQuery;
 
             // Sorting
             allPeople = _peopleService.GetSortedPeople(allPeople ?? new List<PersonResponse>(), sortBy, sortOrderOptions);
 
-            ViewBag.CurrentSortBy = sortBy;
-            ViewBag.CurrentSortOrder = sortOrderOptions;
             ViewBag.NewUser = TempData["NewUser"];
             ViewBag.ErrorDelete = TempData["ErrorDelete"];
 
@@ -183,19 +186,6 @@ namespace ContactsManager.Controllers
         {
             List<CountryResponse>? countries = await _countriesService.GetCountries();
             ViewData["Countries"] = countries.Select(c => new SelectListItem() { Text = c.CountryName, Value = c.CountryId.ToString() });
-        }
-    
-        private void CreateColumns()
-        {
-            ViewBag.SearchFields = new Dictionary<string, string>()
-            {
-                { nameof(PersonResponse.PersonName), "Name" },
-                { nameof(PersonResponse.PersonEmail), "Email" },
-                { nameof(PersonResponse.DateOfBirth), "Date of Birth" },
-                { nameof(PersonResponse.Gender), "Gender" },
-                { nameof(PersonResponse.CountryName), "Country" },
-                { nameof(PersonResponse.Address), "Address" },
-            };
         }
     }
 }
