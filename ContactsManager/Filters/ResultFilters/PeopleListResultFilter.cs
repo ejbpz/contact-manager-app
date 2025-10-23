@@ -14,8 +14,14 @@ namespace ContactsManager.Filters.ResultFilters
         public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             // Before logic
+            _logger.LogInformation("{FilterName}.{MethodName} - before", nameof(PeopleListResultFilter), nameof(OnResultExecutionAsync));
 
             await next();
+
+            // After logic
+            _logger.LogInformation("{FilterName}.{MethodName} - after", nameof(PeopleListResultFilter), nameof(OnResultExecutionAsync));
+
+            context.HttpContext.Response.Headers["Last-Modified"] = DateTime.Now.ToString("F");
         }
     }
 }

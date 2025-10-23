@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Rotativa.AspNetCore;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
-using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Filters.ActionFilters;
+using ContactsManager.Filters.ResultFilters;
+using ContactsManager.ServiceContracts.Enums;
+using ContactsManager.Filters.ResourceFilters;
+using ContactsManager.Filters.ExceptionFilters;
+using ContactsManager.Filters.AuthorizationFilters;
 
 namespace ContactsManager.Controllers
 {
@@ -12,9 +16,8 @@ namespace ContactsManager.Controllers
     [Route("/")]
     [Route("people")]
     [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]
-    {
-        "my-controller-key", "my-controller-value", 3
-    }, Order = 3)]
+    { "my-controller-key", "my-controller-value", 3 }, Order = 3)]
+    [TypeFilter(typeof(HandleExceptionFilter))]
     public class PeopleController : Controller
     {
         private readonly IPeopleService _peopleService;
@@ -32,10 +35,9 @@ namespace ContactsManager.Controllers
 
         [HttpGet("")]
         [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]
-        {
-            "my-method-key", "my-method-value", 1
-        }, Order = 1)]
+        { "my-method-key", "my-method-value", 1 }, Order = 1)]
         [TypeFilter(typeof(PeopleListActionFilter), Order = 4)]
+        [TypeFilter(typeof(PeopleListResultFilter))]
         public async Task<IActionResult> Index(string searchBy, string? searchQuery, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrderOptions = SortOrderOptions.Ascending)
         {
             _logger.LogInformation("Index action method of PeopleController.");
@@ -68,6 +70,8 @@ namespace ContactsManager.Controllers
         //<form action = "~/people/new-person" method="post">
         [HttpPost("new-person")]
         [TypeFilter(typeof(PersonCreateAndEditActionFilter))]
+        [TypeFilter(typeof(FeatureDisabledResourceFilter), Arguments = new object[]
+            { false })]
         public async Task<IActionResult> Create(PersonAddRequest? personRequest)
         {
             await _peopleService.AddPerson(personRequest);
@@ -76,6 +80,7 @@ namespace ContactsManager.Controllers
         }
 
         [HttpGet("edit-person/{personId}")]
+        [TypeFilter(typeof(TokenResultFilter))]
         public async Task<IActionResult> Edit(Guid? personId)
         {
             CallingGenders();
@@ -90,6 +95,7 @@ namespace ContactsManager.Controllers
 
         [HttpPost("edit-person/{personId}")]
         [TypeFilter(typeof(PersonCreateAndEditActionFilter))]
+        [TypeFilter(typeof(TokenAuthorizationFilter))]
         public async Task<IActionResult> Edit(PersonUpdateRequest personRequest)
         {
             await _peopleService.UpdatePerson(personRequest);
