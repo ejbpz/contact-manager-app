@@ -11,7 +11,7 @@ namespace ContactsManager
 {
     public static class ConfigureServiceExtension
     {
-        public static void ConfigureServices(this IServiceCollection services, IWebHostEnvironment environment, ConfigurationManager configuration)
+        public static IServiceCollection ConfigureServices(this IServiceCollection services, IWebHostEnvironment environment, ConfigurationManager configuration)
         {
             services.AddControllersWithViews(options =>
             {
@@ -36,13 +36,15 @@ namespace ContactsManager
             services.AddTransient<ResponseHeaderActionFilter>();
 
             // DbContext
-            if(environment.IsEnvironment("Test"))
+            if(!environment.IsEnvironment("Test"))
             {
                 services.AddDbContext<ApplicationDbContext>(
                     options => {
                         options.UseSqlServer(configuration.GetConnectionString("PeopleDBConnection"));
                     });
             }
+
+            return services;
         } 
     }
 }

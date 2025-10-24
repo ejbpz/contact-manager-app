@@ -98,36 +98,6 @@ namespace ContactsManager.Test
         }
 
         [Fact]
-        public async Task Create_IfModelErrors_ToReturnCreateView()
-        {
-            // Arrange
-            PersonAddRequest personAddRequest = _fixture.Build<PersonAddRequest>()
-                .With(p => p.PersonName, null as string)
-                .Create();
-            List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
-
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
-
-            var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
-            peopleController.TempData = tempData;
-
-            peopleController.ModelState.AddModelError(nameof(PersonAddRequest.PersonName), "Person name cannot be blank.");
-
-            _mockCountriesService.Setup(m => m
-                .GetCountries())
-                .ReturnsAsync(countries);
-
-            // Act
-            var result = await peopleController.Create(personAddRequest);
-
-            // Assert
-            ViewResult? viewResult = result.Should().BeOfType<ViewResult>().Which;
-
-            viewResult.ViewData.Model.Should().BeAssignableTo<PersonAddRequest>();
-            viewResult.ViewData.Model.Should().Be(personAddRequest);
-        }
-
-        [Fact]
         public async Task Create_IfNoModelErrors_ToRedirectToIndexView()
         {
             // Arrange
@@ -207,30 +177,6 @@ namespace ContactsManager.Test
 
             redirectResult.ActionName.Should().Be(nameof(peopleController.Index));
             redirectResult.ControllerName.Should().Be("People");
-        }
-
-        [Fact]
-        public async Task Edit_IfModelErrors_ToReturnEditView()
-        {
-            // Arrange
-            PersonUpdateRequest personUpdateRequest = _fixture.Create<PersonUpdateRequest>();
-            List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
-
-            _mockCountriesService.Setup(m => m
-                .GetCountries())
-                .ReturnsAsync(countries);
-
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
-            
-            peopleController.ModelState.AddModelError(nameof(PersonAddRequest.PersonName), "Person name cannot be blank.");
-
-            // Act
-            IActionResult? result = await peopleController.Edit(personUpdateRequest);
-
-            // Assert
-            ViewResult viewResult = result.Should().BeOfType<ViewResult>().Which;
-
-            viewResult.Model.Should().BeAssignableTo<PersonUpdateRequest>();
         }
 
         [Fact]

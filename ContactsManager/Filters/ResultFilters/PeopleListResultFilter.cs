@@ -16,12 +16,12 @@ namespace ContactsManager.Filters.ResultFilters
             // Before logic
             _logger.LogInformation("{FilterName}.{MethodName} - before", nameof(PeopleListResultFilter), nameof(OnResultExecutionAsync));
 
+            context.HttpContext.Response.Headers["Last-Modified"] = DateTime.Now.ToString("F");
+
             await next();
 
             // After logic
             _logger.LogInformation("{FilterName}.{MethodName} - after", nameof(PeopleListResultFilter), nameof(OnResultExecutionAsync));
-
-            context.HttpContext.Response.Headers["Last-Modified"] = DateTime.Now.ToString("F");
         }
     }
 }

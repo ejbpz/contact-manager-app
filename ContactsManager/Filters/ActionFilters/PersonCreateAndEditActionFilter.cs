@@ -29,6 +29,7 @@ namespace ContactsManager.Filters.ActionFilters
 
                     PersonAddRequest? personAddRequest = ((PersonAddRequest?)context.ActionArguments["personRequest"]) ?? null;
                     context.Result = peopleController.View();
+                    return;
                 } 
                 else
                 {
@@ -39,8 +40,6 @@ namespace ContactsManager.Filters.ActionFilters
             {
                 await next();
             }
-
-            // TODO: After logic
         }
 
         private void CallingGenders(ViewDataDictionary viewData)
