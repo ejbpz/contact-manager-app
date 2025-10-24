@@ -9,15 +9,16 @@ using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Filters.ResourceFilters;
 using ContactsManager.Filters.ExceptionFilters;
 using ContactsManager.Filters.AuthorizationFilters;
+using ContactsManager.Filters.AlwaysRunResultFilters;
 
 namespace ContactsManager.Controllers
 {
     [Controller]
     [Route("/")]
     [Route("people")]
-    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]
-    { "my-controller-key", "my-controller-value", 3 }, Order = 3)]
     [TypeFilter(typeof(HandleExceptionFilter))]
+    [TypeFilter(typeof(PersonAlwaysRunResultFilter))]
+    [ResponseHeaderFilterFactory("my-controller-key", "my-controller-value", 3)]
     public class PeopleController : Controller
     {
         private readonly IPeopleService _peopleService;
@@ -34,9 +35,8 @@ namespace ContactsManager.Controllers
         }
 
         [HttpGet("")]
-        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[]
-        { "my-method-key", "my-method-value", 1 }, Order = 1)]
-        [TypeFilter(typeof(PeopleListActionFilter), Order = 4)]
+        [ResponseHeaderFilterFactory("my-method-key", "my-method-value", 1)]
+        [ServiceFilter(typeof(PeopleListActionFilter), Order = 4)]
         [TypeFilter(typeof(PeopleListResultFilter))]
         public async Task<IActionResult> Index(string searchBy, string? searchQuery, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrderOptions = SortOrderOptions.Ascending)
         {

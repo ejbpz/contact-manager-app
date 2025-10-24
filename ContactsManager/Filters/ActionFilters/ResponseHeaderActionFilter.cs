@@ -2,20 +2,43 @@
 
 namespace ContactsManager.Filters.ActionFilters
 {
+    public class ResponseHeaderFilterFactory : Attribute, IFilterFactory
+    {
+        public bool IsReusable => true;
+
+        private string Key { get; set; } = "";
+        private string Value { get; set; } = "";
+        private int Order { get; set; }
+
+        public ResponseHeaderFilterFactory(string key, string value, int order)
+        {
+            Key = key;
+            Value = value;
+            Order = order;
+        }
+
+        public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
+        {
+            ResponseHeaderActionFilter? filter = serviceProvider.GetRequiredService<ResponseHeaderActionFilter>();
+            filter.Key = Key;
+            filter.Value = Value;
+            filter.Order = Order;
+
+            return filter;
+        }
+    }
+
     public class ResponseHeaderActionFilter : IAsyncActionFilter, IOrderedFilter
     {
-        private readonly ILogger<ResponseHeaderActionFilter> _logger;
-        private readonly string _key;
-        private readonly string _value;
-
+        public string Key { get; set; } = "";
+        public string Value { get; set; } = "";
         public int Order { get; set; }
 
-        public ResponseHeaderActionFilter(ILogger<ResponseHeaderActionFilter> logger, string key, string value, int order)
+        private readonly ILogger<ResponseHeaderActionFilter> _logger;
+
+        public ResponseHeaderActionFilter(ILogger<ResponseHeaderActionFilter> logger)
         {
             _logger = logger;
-            _key = key;
-            _value = value;
-            Order = order;
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -26,7 +49,7 @@ namespace ContactsManager.Filters.ActionFilters
 
             _logger.LogInformation("{FilterName}.{FilterMethod} method", nameof(ResponseHeaderActionFilter), nameof(OnActionExecutionAsync));
 
-            context.HttpContext.Response.Headers[_key] = _value;
+            context.HttpContext.Response.Headers[Key] = Value;
         }
     }
 }

@@ -1,14 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.HttpLogging;
 using Serilog;
-using ContactsManager.Models;
-using ContactsManager.Services;
-using ContactsManager.Repositories;
-using ContactsManager.ServiceContracts;
-using ContactsManager.RepositoryContracts;
-using ContactsManager.Filters.ActionFilters;
+using ContactsManager;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
 // Logging - Serilog
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration configuration) =>
@@ -18,41 +11,16 @@ builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, 
         .ReadFrom.Services(services);
 });
 
-// Views to Controller
-builder.Services.AddControllersWithViews(options =>
-{
-    //options.Filters.Add<PeopleListActionFilter>(5);
-   var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
-    options.Filters.Add(new ResponseHeaderActionFilter(logger, "my-global-key", "my-global-value", 2));
-});
-
-// Services
-builder.Services.AddHttpLogging(options =>
-{
-    options.LoggingFields = HttpLoggingFields.RequestProperties | HttpLoggingFields.ResponsePropertiesAndHeaders;
-});
-builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
-builder.Services.AddScoped<IPeopleRepository, PeopleRepository>();
-builder.Services.AddScoped<ICountriesService, CountriesService>();
-builder.Services.AddScoped<IPeopleService, PeopleService>();
-
-// DbContext
-if(!builder.Environment.IsEnvironment("Test"))
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(
-        options => {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("PeopleDBConnection"));
-        });
-}
+// Adding services
+builder.Services.ConfigureServices(builder.Environment, builder.Configuration);
 
 var app = builder.Build();
 
 // Error screen
-if (builder.Environment.IsDevelopment())
-{
+if (builder.Environment.IsDevelopment()) 
     app.UseDeveloperExceptionPage();
-}
 
+// Middleware pipeline
 app.UseSerilogRequestLogging();
 app.UseHttpLogging();
 app.UseStaticFiles();
@@ -60,10 +28,8 @@ app.UseRouting();
 app.MapControllers();
 
 // Rotativa to PDFs
-if(!builder.Environment.IsEnvironment("Test"))
-{
+if(!builder.Environment.IsEnvironment("Test")) 
     Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
-}
 
 app.Run();
 
