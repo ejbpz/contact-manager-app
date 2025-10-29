@@ -1,5 +1,6 @@
 using Serilog;
 using ContactsManager;
+using ContactsManager.Middlewares;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -16,12 +17,15 @@ builder.Services.ConfigureServices(builder.Environment, builder.Configuration);
 
 var app = builder.Build();
 
+// Middleware pipeline
+app.UseSerilogRequestLogging();
+
 // Error screen
 if (builder.Environment.IsDevelopment()) 
     app.UseDeveloperExceptionPage();
+else 
+    app.UseExceptionHandlingMiddleware();
 
-// Middleware pipeline
-app.UseSerilogRequestLogging();
 app.UseHttpLogging();
 app.UseStaticFiles();
 app.UseRouting();
