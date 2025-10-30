@@ -389,7 +389,7 @@ namespace ContactsManager.Test
                 .ReturnsAsync(person);
 
             _mockPeopleRepository.Setup(m => m
-                .UpdatePerson(It.IsAny<Person>()))
+                .UpdatePerson(It.IsAny<Person>(), It.IsAny<Person>()))
                 .ReturnsAsync(person);
 
             // Act

@@ -1,16 +1,18 @@
-﻿using System.Globalization;
-using Microsoft.Extensions.Logging;
-using Serilog;
-using CsvHelper;
-using OfficeOpenXml;
-using SerilogTimings;
-using CsvHelper.Configuration;
+﻿using ContactsManager.Exceptions;
 using ContactsManager.Models;
+using ContactsManager.RepositoryContracts;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
 using ContactsManager.Services.Helpers;
-using ContactsManager.RepositoryContracts;
+using CsvHelper;
+using CsvHelper.Configuration;
+using Microsoft.Extensions.Logging;
+using OfficeOpenXml;
+using Serilog;
+using SerilogTimings;
+using System;
+using System.Globalization;
 
 namespace ContactsManager.Services
 {
@@ -160,11 +162,16 @@ namespace ContactsManager.Services
         {
             if (personUpdateRequest is null) throw new ArgumentNullException(nameof(personUpdateRequest));
 
-            if (personUpdateRequest.PersonId == Guid.Empty) throw new ArgumentException("The person Id is null.");
+            if (personUpdateRequest.PersonId == Guid.Empty || personUpdateRequest?.PersonId == null) throw new ArgumentException("The person Id is null.");
 
             ValidationHelper.ModelValidation(personUpdateRequest);
 
-            return (await _peopleRepository.UpdatePerson(personUpdateRequest.ToPerson())).ToPersonResponse();
+
+            Person? personToUpdate = (await GetPersonByPersonId(personUpdateRequest.PersonId))?.ToPersonUpdateRequest().ToPerson();
+
+            if (personToUpdate is null) throw new InvalidPersonIdException("Given person Id doesn't exist.");
+
+            return (await _peopleRepository.UpdatePerson(personToUpdate, personUpdateRequest.ToPerson())).ToPersonResponse();
         }
 
         public async Task<bool> DeletePerson(Guid? personId)

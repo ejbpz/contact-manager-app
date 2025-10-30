@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ContactsManager.Exceptions\ContactsManager.Exceptions.csproj" />
     <ProjectReference Include="..\ContactsManager.RepositoryContracts\ContactsManager.RepositoryContracts.csproj" />
     <ProjectReference Include="..\ContactsManager.ServiceContracts\ContactsManager.ServiceContracts.csproj" />
   </ItemGroup>

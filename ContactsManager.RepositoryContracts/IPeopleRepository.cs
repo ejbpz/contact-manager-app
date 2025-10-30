@@ -47,6 +47,6 @@ namespace ContactsManager.RepositoryContracts
         /// </summary>
         /// <param name="person">Person's object to be updated.</param>
         /// <returns>Returns the person object updated.</returns>
-        Task<Person> UpdatePerson(Person person);
+        Task<Person> UpdatePerson(Person personToUpdate, Person newPerson);
     }
 }

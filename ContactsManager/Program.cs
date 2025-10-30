@@ -18,21 +18,19 @@ builder.Services.ConfigureServices(builder.Environment, builder.Configuration);
 var app = builder.Build();
 
 // Middleware pipeline
-app.UseSerilogRequestLogging();
 
 // Error screen
-if (builder.Environment.IsDevelopment()) 
-    app.UseDeveloperExceptionPage();
-else 
-    app.UseExceptionHandlingMiddleware();
+if (builder.Environment.IsDevelopment()) app.UseDeveloperExceptionPage();
+else app.UseExceptionHandlingMiddleware();
 
+app.UseSerilogRequestLogging();
 app.UseHttpLogging();
 app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
 
 // Rotativa to PDFs
-if(!builder.Environment.IsEnvironment("Test")) 
+if (!builder.Environment.IsEnvironment("Test")) 
     Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
 app.Run();

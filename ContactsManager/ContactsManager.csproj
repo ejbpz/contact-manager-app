@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ContactsManager.Exceptions\ContactsManager.Exceptions.csproj" />
     <ProjectReference Include="..\ContactsManager.Repositories\ContactsManager.Repositories.csproj" />
     <ProjectReference Include="..\ContactsManager.Services\ContactsManager.Services.csproj" />
   </ItemGroup>

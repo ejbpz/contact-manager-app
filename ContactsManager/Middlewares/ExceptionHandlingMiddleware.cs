@@ -1,20 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Serilog;
-using System.Threading.Tasks;
+﻿using Serilog;
 
 namespace ContactsManager.Middlewares
 {
-    // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly Logger<ExceptionHandlingMiddleware> _logger;
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
         private readonly IDiagnosticContext _diagnosticContext;
 
-        public ExceptionHandlingMiddleware(RequestDelegate next, Logger<ExceptionHandlingMiddleware> logger, IDiagnosticContext diagnosticContext)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger, IDiagnosticContext diagnosticContext)
         {
-            _next = next;
+            _next = next; //represents the subsequent middleware
             _logger = logger;
             _diagnosticContext = diagnosticContext;
         }
@@ -30,10 +26,10 @@ namespace ContactsManager.Middlewares
                 if(ex.InnerException is not null)
                     _logger.LogError("{ExceptionType} - {ExceptionMessage}", ex.InnerException, ex.Message);
                 else
-                    _logger.LogError("{ExceptionMessage}", ex.Message);
+                    _logger.LogError("{ExceptionType} - {ExceptionMessage}", ex.GetType().ToString(), ex.Message);
 
                 httpContext.Response.StatusCode = 500;
-                await httpContext.Response.WriteAsync("Error ocurred");
+                await httpContext.Response.WriteAsync("Error ocurred in the server.");
             }
         }
     }

@@ -58,12 +58,8 @@ namespace ContactsManager.Repositories
                 .FirstOrDefaultAsync(p => p.PersonId == personId);
         }
 
-        public async Task<Person> UpdatePerson(Person person)
+        public async Task<Person> UpdatePerson(Person personToUpdate, Person person)
         {
-            Person? personToUpdate = await GetPersonByPersonId(person.PersonId);
-
-            if (personToUpdate is null) return person;
-
             personToUpdate.PersonName = person.PersonName ?? personToUpdate.PersonName;
             personToUpdate.PersonEmail = person.PersonEmail ?? personToUpdate.PersonEmail;
             personToUpdate.DateOfBirth = person.DateOfBirth ?? personToUpdate.DateOfBirth;
