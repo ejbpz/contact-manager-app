@@ -44,12 +44,11 @@ namespace ContactsManager.Filters.ActionFilters
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             _logger.LogInformation("{FilterName}.{FilterMethod} method", nameof(ResponseHeaderActionFilter), nameof(OnActionExecutionAsync));
+            context.HttpContext.Response.Headers[Key] = Value;
 
             await next();
 
             _logger.LogInformation("{FilterName}.{FilterMethod} method", nameof(ResponseHeaderActionFilter), nameof(OnActionExecutionAsync));
-
-            context.HttpContext.Response.Headers[Key] = Value;
         }
     }
 }

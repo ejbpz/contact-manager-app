@@ -28,8 +28,10 @@ namespace ContactsManager.Middlewares
                 else
                     _logger.LogError("{ExceptionType} - {ExceptionMessage}", ex.GetType().ToString(), ex.Message);
 
-                httpContext.Response.StatusCode = 500;
-                await httpContext.Response.WriteAsync("Error ocurred in the server.");
+                //httpContext.Response.StatusCode = 500;
+                //await httpContext.Response.WriteAsync("Error ocurred in the server.");
+
+                throw;
             }
         }
     }

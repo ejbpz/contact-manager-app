@@ -21,8 +21,11 @@ var app = builder.Build();
 
 // Error screen
 if (builder.Environment.IsDevelopment()) app.UseDeveloperExceptionPage();
-else app.UseExceptionHandlingMiddleware();
-
+else
+{
+    app.UseExceptionHandler("/error");
+    app.UseExceptionHandlingMiddleware();
+}
 app.UseSerilogRequestLogging();
 app.UseHttpLogging();
 app.UseStaticFiles();

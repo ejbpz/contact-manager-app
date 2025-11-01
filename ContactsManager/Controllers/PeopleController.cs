@@ -98,7 +98,6 @@ namespace ContactsManager.Controllers
         [TypeFilter(typeof(TokenAuthorizationFilter))]
         public async Task<IActionResult> Edit(PersonUpdateRequest personRequest)
         {
-            personRequest.PersonId = Guid.NewGuid();
             await _peopleService.UpdatePerson(personRequest);
             TempData["NewUser"] = $"{personRequest?.PersonName ?? "Person"} has been succesfully updated.";
             return RedirectToAction("Index", "People");
