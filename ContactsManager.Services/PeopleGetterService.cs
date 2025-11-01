@@ -1,46 +1,28 @@
-﻿using ContactsManager.Exceptions;
-using ContactsManager.Models;
-using ContactsManager.RepositoryContracts;
-using ContactsManager.ServiceContracts;
-using ContactsManager.ServiceContracts.DTOs;
-using ContactsManager.ServiceContracts.Enums;
-using ContactsManager.Services.Helpers;
-using CsvHelper;
-using CsvHelper.Configuration;
-using Microsoft.Extensions.Logging;
-using OfficeOpenXml;
+﻿using Microsoft.Extensions.Logging;
 using Serilog;
+using CsvHelper;
+using OfficeOpenXml;
 using SerilogTimings;
-using System;
 using System.Globalization;
+using CsvHelper.Configuration;
+using ContactsManager.Models;
+using ContactsManager.ServiceContracts;
+using ContactsManager.RepositoryContracts;
+using ContactsManager.ServiceContracts.DTOs;
 
 namespace ContactsManager.Services
 {
-    public class PeopleService : IPeopleService
+    public class PeopleGetterService : IPeopleGetterService
     {
         private readonly IPeopleRepository _peopleRepository;
-        private readonly ILogger<PeopleService> _logger;
+        private readonly ILogger<PeopleAdderService> _logger;
         private readonly IDiagnosticContext _diagnosticContext;
 
-        public PeopleService(IPeopleRepository peopleRepository, ILogger<PeopleService> logger, IDiagnosticContext diagnosticContext)
+        public PeopleGetterService(IPeopleRepository peopleRepository, ILogger<PeopleAdderService> logger, IDiagnosticContext diagnosticContext)
         {
             _peopleRepository = peopleRepository;
             _logger = logger;
             _diagnosticContext = diagnosticContext;
-        }
-
-        public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
-        {
-            if (personAddRequest is null) throw new ArgumentNullException(nameof(personAddRequest));
-
-            ValidationHelper.ModelValidation(personAddRequest);
-
-            Person person = personAddRequest.ToPerson();
-            person.PersonId = Guid.NewGuid();
-
-            await _peopleRepository.AddPerson(person);
-
-            return person.ToPersonResponse();
         }
 
         public async Task<List<PersonResponse>> GetPeople()
@@ -118,67 +100,6 @@ namespace ContactsManager.Services
             _diagnosticContext.Set("People", matchingPeople ?? new List<Person>());
 
             return matchingPeople?.Select(p => p.ToPersonResponse()).ToList();
-        }
-
-        public List<PersonResponse> GetSortedPeople(List<PersonResponse> allPeople, string sortBy, SortOrderOptions sortOrder)
-        {
-            _logger.LogInformation("GetSortedPeople of PeopleService.");
-            if (string.IsNullOrEmpty(sortBy)) return allPeople;
-
-            List<PersonResponse> sortedPeople = (sortBy, sortOrder)
-            switch
-            {
-                (nameof(PersonResponse.PersonName), SortOrderOptions.Ascending) => allPeople.OrderBy(p => p.PersonName, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.PersonName), SortOrderOptions.Descending) => allPeople.OrderByDescending(p => p.PersonName, StringComparer.OrdinalIgnoreCase).ToList(),
-
-                (nameof(PersonResponse.PersonEmail), SortOrderOptions.Ascending) => allPeople.OrderBy(p => p.PersonEmail, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.PersonEmail), SortOrderOptions.Descending) => allPeople.OrderByDescending(p => p.PersonEmail, StringComparer.OrdinalIgnoreCase).ToList(),
-
-                (nameof(PersonResponse.DateOfBirth), SortOrderOptions.Ascending) => allPeople.OrderBy(p => p.DateOfBirth).ToList(),
-                (nameof(PersonResponse.DateOfBirth), SortOrderOptions.Descending) => allPeople.OrderByDescending(p => p.DateOfBirth).ToList(),
-
-                (nameof(PersonResponse.Age), SortOrderOptions.Ascending) => allPeople.OrderBy(p => p.Age).ToList(),
-                (nameof(PersonResponse.Age), SortOrderOptions.Descending) => allPeople.OrderByDescending(p => p.Age).ToList(),
-
-                (nameof(PersonResponse.Gender), SortOrderOptions.Ascending) => allPeople.OrderBy(p => p.Gender, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.Gender), SortOrderOptions.Descending) => allPeople.OrderByDescending(p => p.Gender, StringComparer.OrdinalIgnoreCase).ToList(),
-
-                (nameof(PersonResponse.CountryName), SortOrderOptions.Ascending) => allPeople.OrderBy(p => p.CountryName, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.CountryName), SortOrderOptions.Descending) => allPeople.OrderByDescending(p => p.CountryName, StringComparer.OrdinalIgnoreCase).ToList(),
-
-                (nameof(PersonResponse.Address), SortOrderOptions.Ascending) => allPeople.OrderBy(p => p.Address, StringComparer.OrdinalIgnoreCase).ToList(),
-                (nameof(PersonResponse.Address), SortOrderOptions.Descending) => allPeople.OrderByDescending(p => p.Address, StringComparer.OrdinalIgnoreCase).ToList(),
-
-                (nameof(PersonResponse.IsReceivingNewsLetters), SortOrderOptions.Ascending) => allPeople.OrderBy(p => p.IsReceivingNewsLetters).ToList(),
-                (nameof(PersonResponse.IsReceivingNewsLetters), SortOrderOptions.Descending) => allPeople.OrderByDescending(p => p.IsReceivingNewsLetters).ToList(),
-
-                _ => allPeople
-            };
-
-            return sortedPeople;
-        }
-
-        public async Task<PersonResponse?> UpdatePerson(PersonUpdateRequest? personUpdateRequest)
-        {
-            if (personUpdateRequest is null) throw new ArgumentNullException(nameof(personUpdateRequest));
-
-            if (personUpdateRequest.PersonId == Guid.Empty || personUpdateRequest?.PersonId == null) throw new ArgumentException("The person Id is null.");
-
-            ValidationHelper.ModelValidation(personUpdateRequest);
-
-
-            Person? personToUpdate = (await GetPersonByPersonId(personUpdateRequest.PersonId))?.ToPersonUpdateRequest().ToPerson();
-
-            if (personToUpdate is null) throw new InvalidPersonIdException("Given person Id doesn't exist.");
-
-            return (await _peopleRepository.UpdatePerson(personToUpdate, personUpdateRequest.ToPerson())).ToPersonResponse();
-        }
-
-        public async Task<bool> DeletePerson(Guid? personId)
-        {
-            if (personId is null || personId.Value == Guid.Empty) return false;
-
-            return await _peopleRepository.DeletePersonByPersonId(personId.Value);
         }
 
         public async Task<MemoryStream> GetPeopleCSV()

@@ -1,28 +1,32 @@
-﻿using AutoFixture;
-using ContactsManager.Models;
-using ContactsManager.RepositoryContracts;
-using ContactsManager.ServiceContracts;
-using ContactsManager.ServiceContracts.DTOs;
-using ContactsManager.ServiceContracts.Enums;
-using ContactsManager.Services;
-using FluentAssertions;
+﻿using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Serilog;
-using System.Linq.Expressions;
+using AutoFixture;
+using FluentAssertions;
 using Xunit.Abstractions;
+using ContactsManager.Models;
+using ContactsManager.Services;
+using ContactsManager.ServiceContracts;
+using ContactsManager.RepositoryContracts;
+using ContactsManager.ServiceContracts.DTOs;
+using ContactsManager.ServiceContracts.Enums;
 
 namespace ContactsManager.Test
 {
     public class PeopleServiceTest
     {
-        private readonly IPeopleService _peopleService;
+        private readonly IPeopleAdderService _peopleAdderService;
+        private readonly IPeopleGetterService _peopleGetterService;
+        private readonly IPeopleDeleterService _peopleDeleterService;
+        private readonly IPeopleUpdaterService _peopleUpdaterService;
+        private readonly IPeopleSorterService _peopleSorterService;
 
         private readonly Mock<IPeopleRepository> _mockPeopleRepository;
         private readonly IPeopleRepository _peopleRepository;
 
-        private readonly Mock<ILogger<PeopleService>> _mockLoggerPeopleService;
-        private readonly ILogger<PeopleService> _loggerPeopleService;
+        private readonly Mock<ILogger<PeopleAdderService>> _mockLoggerPeopleService;
+        private readonly ILogger<PeopleAdderService> _loggerPeopleService;
 
         private readonly Mock<IDiagnosticContext> _mockDiagnosticContext;
         private readonly IDiagnosticContext _diagnosticContext;
@@ -40,10 +44,15 @@ namespace ContactsManager.Test
             _mockDiagnosticContext = new Mock<IDiagnosticContext>();
             _diagnosticContext = _mockDiagnosticContext.Object;
 
-            _mockLoggerPeopleService = new Mock<ILogger<PeopleService>>();
+            _mockLoggerPeopleService = new Mock<ILogger<PeopleAdderService>>();
             _loggerPeopleService = _mockLoggerPeopleService.Object;
 
-            _peopleService = new PeopleService(_peopleRepository, _loggerPeopleService, _diagnosticContext);
+            _peopleAdderService = new PeopleAdderService(_peopleRepository, _loggerPeopleService, _diagnosticContext);
+            _peopleGetterService = new PeopleGetterService(_peopleRepository, _loggerPeopleService, _diagnosticContext);
+            _peopleDeleterService = new PeopleDeleterService(_peopleRepository);
+            _peopleUpdaterService = new PeopleUpdaterService(_peopleGetterService, _peopleRepository, _loggerPeopleService);
+            _peopleSorterService = new PeopleSorterService(_loggerPeopleService);
+
             _testOutputHelper = testOutputHelper;
         }
 
@@ -68,7 +77,7 @@ namespace ContactsManager.Test
             Func<Task> action = async () =>
             {
                 // Act
-                await _peopleService.AddPerson(personAddRequest);
+                await _peopleAdderService.AddPerson(personAddRequest);
             };
 
             await action.Should().ThrowAsync<ArgumentNullException>();
@@ -88,7 +97,7 @@ namespace ContactsManager.Test
             Func<Task> action = async () =>
             {
                 // Act
-                await _peopleService.AddPerson(personAddRequest);
+                await _peopleAdderService.AddPerson(personAddRequest);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -111,7 +120,7 @@ namespace ContactsManager.Test
                 .ReturnsAsync(person);
 
             // Act
-            PersonResponse personRetrieved = await _peopleService.AddPerson(personAddRequest);
+            PersonResponse personRetrieved = await _peopleAdderService.AddPerson(personAddRequest);
             personExpected.PersonId = personRetrieved.PersonId;
 
             // Assert
@@ -129,7 +138,7 @@ namespace ContactsManager.Test
             Guid? personId = null;
 
             // Act
-            PersonResponse? personResponse = await _peopleService.GetPersonByPersonId(personId);
+            PersonResponse? personResponse = await _peopleGetterService.GetPersonByPersonId(personId);
 
             // Assert
             personResponse.Should().BeNull();
@@ -151,7 +160,7 @@ namespace ContactsManager.Test
                 .ReturnsAsync(person);
 
             // Act
-            PersonResponse? personResponse = await _peopleService.GetPersonByPersonId(person.PersonId);
+            PersonResponse? personResponse = await _peopleGetterService.GetPersonByPersonId(person.PersonId);
 
             // Assert
             personResponse.Should().Be(personExpected);
@@ -171,7 +180,7 @@ namespace ContactsManager.Test
                 .ReturnsAsync(new List<Person>());
 
             // Act
-            listOfPeople = await _peopleService.GetPeople();
+            listOfPeople = await _peopleGetterService.GetPeople();
 
             // Assert
             listOfPeople.Should().BeEmpty();
@@ -191,7 +200,7 @@ namespace ContactsManager.Test
                 .ReturnsAsync(listOfPeople);
 
             // Act
-            List<PersonResponse> peopleResponse = await _peopleService.GetPeople();
+            List<PersonResponse> peopleResponse = await _peopleGetterService.GetPeople();
 
             // Print people added
             _testOutputHelper.WriteLine("Expected:");
@@ -225,7 +234,7 @@ namespace ContactsManager.Test
                 .ReturnsAsync(listOfPeople);
 
             // Act
-            List<PersonResponse> peopleResponse = await _peopleService.GetFilteredPeople(nameof(Person.PersonName), "");
+            List<PersonResponse>? peopleResponse = await _peopleGetterService.GetFilteredPeople(nameof(Person.PersonName), "");
 
             // Print
             _testOutputHelper.WriteLine("Expected:");
@@ -257,7 +266,7 @@ namespace ContactsManager.Test
                 .ReturnsAsync(listOfPeople.Where(p => p.PersonName!.Contains("a")).ToList());
 
             // Act
-            List<PersonResponse> peopleResponse = await _peopleService.GetFilteredPeople(nameof(Person.PersonName), "a");
+            List<PersonResponse>? peopleResponse = await _peopleGetterService.GetFilteredPeople(nameof(Person.PersonName), "a");
 
             // Print
             _testOutputHelper.WriteLine("Expected:");
@@ -290,9 +299,9 @@ namespace ContactsManager.Test
                 .ReturnsAsync(listOfPeople);
 
             // Act
-            List<PersonResponse> peopleResponse = await _peopleService.GetPeople();
+            List<PersonResponse> peopleResponse = await _peopleGetterService.GetPeople();
 
-            List<PersonResponse> peopleSorted = _peopleService.GetSortedPeople(peopleResponse, nameof(Person.PersonName), SortOrderOptions.Descending);
+            List<PersonResponse> peopleSorted = _peopleSorterService.GetSortedPeople(peopleResponse, nameof(Person.PersonName), SortOrderOptions.Descending);
 
             // Print
             _testOutputHelper.WriteLine("People (not sorted):");
@@ -323,7 +332,7 @@ namespace ContactsManager.Test
             Func<Task> action = async () =>
             {
                 // Act
-                await _peopleService.UpdatePerson(personUpdate);
+                await _peopleUpdaterService.UpdatePerson(personUpdate);
             };
 
             await action.Should().ThrowAsync<ArgumentNullException>();
@@ -342,7 +351,7 @@ namespace ContactsManager.Test
             Func<Task> action = async () =>
             {
                 // Act
-                await _peopleService.UpdatePerson(personUpdate);
+                await _peopleUpdaterService.UpdatePerson(personUpdate);
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -363,7 +372,7 @@ namespace ContactsManager.Test
             Func<Task> action = async () =>
             {
                 // Act
-                await _peopleService.UpdatePerson(person.ToPersonResponse().ToPersonUpdateRequest());
+                await _peopleUpdaterService.UpdatePerson(person.ToPersonResponse().ToPersonUpdateRequest());
             };
 
             await action.Should().ThrowAsync<ArgumentException>();
@@ -393,7 +402,7 @@ namespace ContactsManager.Test
                 .ReturnsAsync(person);
 
             // Act
-            PersonResponse? personResponse = await _peopleService.UpdatePerson(personUpdate);
+            PersonResponse? personResponse = await _peopleUpdaterService.UpdatePerson(personUpdate);
 
             // Assert
             personResponse.Should().Be(personExpected);
@@ -406,8 +415,8 @@ namespace ContactsManager.Test
         public async Task DeletePerson_WrongId_ToBeFalse()
         {
             // Act
-            bool wasDeleted1 = await _peopleService.DeletePerson(Guid.NewGuid());
-            bool wasDeleted2 = await _peopleService.DeletePerson(null);
+            bool wasDeleted1 = await _peopleDeleterService.DeletePerson(Guid.NewGuid());
+            bool wasDeleted2 = await _peopleDeleterService.DeletePerson(null);
 
             // Assert
             wasDeleted1.Should().BeFalse();
@@ -431,7 +440,7 @@ namespace ContactsManager.Test
                 .ReturnsAsync(true);
 
             // Act
-            bool wasDeleted = await _peopleService.DeletePerson(person.PersonId);
+            bool wasDeleted = await _peopleDeleterService.DeletePerson(person.PersonId);
 
             // Assert
             wasDeleted.Should().BeTrue();

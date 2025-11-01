@@ -28,9 +28,16 @@ namespace ContactsManager
 
 
             services.AddScoped<ICountriesRepository, CountriesRepository>();
+            
             services.AddScoped<IPeopleRepository, PeopleRepository>();
+
             services.AddScoped<ICountriesService, CountriesService>();
-            services.AddScoped<IPeopleService, PeopleService>();
+
+            services.AddScoped<IPeopleGetterService, PeopleGetterService>();
+            services.AddScoped<IPeopleAdderService, PeopleAdderService>();
+            services.AddScoped<IPeopleDeleterService, PeopleDeleterService>();
+            services.AddScoped<IPeopleUpdaterService, PeopleUpdaterService>();
+            services.AddScoped<IPeopleSorterService, PeopleSorterService>();
 
             services.AddTransient<PeopleListActionFilter>();
             services.AddTransient<ResponseHeaderActionFilter>();

@@ -1,26 +1,37 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Moq;
-using AutoFixture;
-using FluentAssertions;
-using ContactsManager.Models;
+﻿using AutoFixture;
 using ContactsManager.Controllers;
+using ContactsManager.Models;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
+using ContactsManager.Services;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace ContactsManager.Test
 {
     public class PeopleControllerTest
     {
-        private readonly IPeopleService _peopleService;
+        private readonly IPeopleAdderService _peopleAdderService;
+        private readonly IPeopleGetterService _peopleGetterService;
+        private readonly IPeopleDeleterService _peopleDeleterService;
+        private readonly IPeopleUpdaterService _peopleUpdaterService;
+        private readonly IPeopleSorterService _peopleSorterService;
         private readonly ICountriesService _countriesService;
 
-        private readonly Mock<IPeopleService> _mockPeopleService;
+        private readonly Mock<IPeopleAdderService> _mockPeopleAdderService;
+        private readonly Mock<IPeopleGetterService> _mockPeopleGetterService;
+        private readonly Mock<IPeopleDeleterService> _mockPeopleDeleterService;
+        private readonly Mock<IPeopleUpdaterService> _mockPeopleUpdaterService;
+        private readonly Mock<IPeopleSorterService> _mockPeopleSorterService;
         private readonly Mock<ICountriesService> _mockCountriesService;
+
+        private readonly PeopleController peopleController;
 
         private readonly Mock<ILogger<PeopleController>> _mockLoggerPeopleController;
         private readonly ILogger<PeopleController> _loggerPeopleController;
@@ -31,13 +42,25 @@ namespace ContactsManager.Test
         {
             _fixture = new Fixture();
 
-            _mockPeopleService = new Mock<IPeopleService>();
+            _mockPeopleAdderService = new Mock<IPeopleAdderService>();
+            _mockPeopleGetterService = new Mock<IPeopleGetterService>();
+            _mockPeopleDeleterService = new Mock<IPeopleDeleterService>();
+            _mockPeopleUpdaterService = new Mock<IPeopleUpdaterService>();
+            _mockPeopleSorterService = new Mock<IPeopleSorterService>();
+
             _mockCountriesService = new Mock<ICountriesService>();
             _mockLoggerPeopleController = new Mock<ILogger<PeopleController>>();
 
-            _peopleService = _mockPeopleService.Object;
+            _peopleAdderService = _mockPeopleAdderService.Object;
+            _peopleGetterService = _mockPeopleGetterService.Object;
+            _peopleDeleterService = _mockPeopleDeleterService.Object;
+            _peopleUpdaterService = _mockPeopleUpdaterService.Object;
+            _peopleSorterService = _mockPeopleSorterService.Object;
+
             _countriesService = _mockCountriesService.Object;
             _loggerPeopleController = _mockLoggerPeopleController.Object;
+
+            peopleController = new PeopleController(_peopleAdderService, _peopleGetterService, _peopleDeleterService, _peopleUpdaterService, _peopleSorterService, _countriesService, _loggerPeopleController);
         }
 
         #region Index
@@ -47,18 +70,15 @@ namespace ContactsManager.Test
             // Arrange
             List<PersonResponse> people = _fixture.Create<List<PersonResponse>>();
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
-
-            var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
-            peopleController.TempData = tempData;
+            var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());peopleController.TempData = tempData;
             peopleController.TempData["NewUser"] = "";
             peopleController.TempData["ErrorDelete"] = "";
 
-            _mockPeopleService.Setup(m => m
+            _mockPeopleGetterService.Setup(m => m
                 .GetFilteredPeople(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(people);
 
-            _mockPeopleService.Setup(m => m
+            _mockPeopleSorterService.Setup(m => m
                 .GetSortedPeople(It.IsAny<List<PersonResponse>>(), It.IsAny<string>(), It.IsAny<SortOrderOptions>()))
                 .Returns(people);
 
@@ -85,8 +105,6 @@ namespace ContactsManager.Test
                 .GetCountries())
                 .ReturnsAsync(countries);
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
-
             // Act
             var result = await peopleController.Create();
 
@@ -104,12 +122,10 @@ namespace ContactsManager.Test
             PersonAddRequest personAddRequest = _fixture.Create<PersonAddRequest>();
             PersonResponse personResponse = personAddRequest.ToPerson().ToPersonResponse();
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
-
             var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
             peopleController.TempData = tempData;
 
-            _mockPeopleService.Setup(m => m
+            _mockPeopleAdderService.Setup(m => m
                 .AddPerson(It.IsAny<PersonAddRequest>()))
                 .ReturnsAsync(personResponse);
 
@@ -138,11 +154,9 @@ namespace ContactsManager.Test
                 .GetCountries())
                 .ReturnsAsync(countries);
 
-            _mockPeopleService.Setup(m => m
+            _mockPeopleGetterService.Setup(m => m
                 .GetPersonByPersonId(It.IsAny<Guid>()))
                 .ReturnsAsync(person.ToPersonResponse());
-
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             // Act
             var result = await peopleController.Edit(person.PersonId);
@@ -163,11 +177,9 @@ namespace ContactsManager.Test
                 .GetCountries())
                 .ReturnsAsync(countries);
 
-            _mockPeopleService.Setup(m => m
+            _mockPeopleGetterService.Setup(m => m
                 .GetPersonByPersonId(It.IsAny<Guid>()))
                 .ReturnsAsync(null as PersonResponse);
-
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             // Act
             var result = await peopleController.Edit(Guid.NewGuid());
@@ -186,13 +198,12 @@ namespace ContactsManager.Test
             PersonUpdateRequest personUpdateRequest = _fixture.Create<PersonUpdateRequest>();
             List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
 
-            _mockPeopleService.Setup(m => m
+            _mockPeopleUpdaterService.Setup(m => m
                 .UpdatePerson(It.IsAny<PersonUpdateRequest>()))
                 .ReturnsAsync(personUpdateRequest.ToPerson().ToPersonResponse());
 
             var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
             peopleController.TempData = tempData;
 
             // Act
@@ -213,11 +224,9 @@ namespace ContactsManager.Test
             // Arrange
             PersonResponse personResponse = _fixture.Create<PersonResponse>();
 
-            _mockPeopleService.Setup(m => m
+            _mockPeopleGetterService.Setup(m => m
                 .GetPersonByPersonId(It.IsAny<Guid>()))
                 .ReturnsAsync(personResponse);
-
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             // Act
             var result = await peopleController.DeleteView(personResponse.PersonId);
@@ -235,11 +244,9 @@ namespace ContactsManager.Test
         public async Task Delete_RedirectIndexView()
         {
             // Arrange
-            _mockPeopleService.Setup(m => m
+            _mockPeopleGetterService.Setup(m => m
                 .GetPersonByPersonId(It.IsAny<Guid>()))
                 .ReturnsAsync(null as PersonResponse);
-
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
 
             // Act
             var result = await peopleController.DeleteView(Guid.NewGuid());
@@ -257,17 +264,16 @@ namespace ContactsManager.Test
             // Arrange
             PersonResponse personResponse = _fixture.Create<PersonResponse>();
 
-            _mockPeopleService.Setup(m => m
+            _mockPeopleGetterService.Setup(m => m
                 .GetPersonByPersonId(It.IsAny<Guid>()))
                 .ReturnsAsync(personResponse);
 
-            _mockPeopleService.Setup(m => m
+            _mockPeopleDeleterService.Setup(m => m
                 .DeletePerson(It.IsAny<Guid>()))
                 .ReturnsAsync(true);
 
             var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
             peopleController.TempData = tempData;
 
             // Act
@@ -288,17 +294,16 @@ namespace ContactsManager.Test
             // Arrange
             PersonResponse personResponse = _fixture.Create<PersonResponse>();
 
-            _mockPeopleService.Setup(m => m
+            _mockPeopleGetterService.Setup(m => m
                 .GetPersonByPersonId(It.IsAny<Guid>()))
                 .ReturnsAsync(personResponse);
 
-            _mockPeopleService.Setup(m => m
+            _mockPeopleDeleterService.Setup(m => m
                 .DeletePerson(It.IsAny<Guid>()))
                 .ReturnsAsync(false);
 
             var tempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
 
-            PeopleController peopleController = new PeopleController(_peopleService, _countriesService, _loggerPeopleController);
             peopleController.TempData = tempData;
 
             // Act

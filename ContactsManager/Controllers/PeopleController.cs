@@ -21,15 +21,29 @@ namespace ContactsManager.Controllers
     [ResponseHeaderFilterFactory("my-controller-key", "my-controller-value", 3)]
     public class PeopleController : Controller
     {
-        private readonly IPeopleService _peopleService;
+        private readonly IPeopleAdderService _peopleAdderService;
+        private readonly IPeopleGetterService _peopleGetterService;
+        private readonly IPeopleDeleterService _peopleDeleterService;
+        private readonly IPeopleUpdaterService _peopleUpdaterService;
+        private readonly IPeopleSorterService _peopleSorterService;
+
         private readonly ICountriesService _countriesService;
         private readonly ILogger<PeopleController> _logger;
 
-        public PeopleController(IPeopleService peopleService, 
+        public PeopleController(IPeopleAdderService peopleAdderService,
+                                IPeopleGetterService peopleGetterService,
+                                IPeopleDeleterService peopleDeleterService,
+                                IPeopleUpdaterService peopleUpdaterService,
+                                IPeopleSorterService peopleSorterService,
                                 ICountriesService countriesService,
                                 ILogger<PeopleController> logger)
         {
-            _peopleService = peopleService;
+            _peopleAdderService = peopleAdderService;
+            _peopleGetterService = peopleGetterService;
+            _peopleDeleterService = peopleDeleterService;
+            _peopleUpdaterService = peopleUpdaterService;
+            _peopleSorterService = peopleSorterService;
+
             _countriesService = countriesService;
             _logger = logger;
         }
@@ -47,10 +61,10 @@ namespace ContactsManager.Controllers
             _logger.LogDebug($"sortOrderOptions: {sortOrderOptions}");
 
             // Searching
-            List<PersonResponse>? allPeople = await _peopleService.GetFilteredPeople(searchBy, searchQuery);
+            List<PersonResponse>? allPeople = await _peopleGetterService.GetFilteredPeople(searchBy, searchQuery);
 
             // Sorting
-            allPeople = _peopleService.GetSortedPeople(allPeople ?? new List<PersonResponse>(), sortBy, sortOrderOptions);
+            allPeople = _peopleSorterService.GetSortedPeople(allPeople ?? new List<PersonResponse>(), sortBy, sortOrderOptions);
 
             ViewBag.NewUser = TempData["NewUser"];
             ViewBag.ErrorDelete = TempData["ErrorDelete"];
@@ -74,7 +88,7 @@ namespace ContactsManager.Controllers
             { false })]
         public async Task<IActionResult> Create(PersonAddRequest? personRequest)
         {
-            await _peopleService.AddPerson(personRequest);
+            await _peopleAdderService.AddPerson(personRequest);
             TempData["NewUser"] = $"{personRequest?.PersonName ?? "New person"} has been succesfully added.";
             return RedirectToAction("Index", "People");
         }
@@ -86,7 +100,7 @@ namespace ContactsManager.Controllers
             CallingGenders();
             await CallingCountries();
 
-            PersonResponse? personResponse = await _peopleService.GetPersonByPersonId(personId);
+            PersonResponse? personResponse = await _peopleGetterService.GetPersonByPersonId(personId);
 
             if (personResponse is null) return RedirectToAction("Index", "People");
 
@@ -98,7 +112,7 @@ namespace ContactsManager.Controllers
         [TypeFilter(typeof(TokenAuthorizationFilter))]
         public async Task<IActionResult> Edit(PersonUpdateRequest personRequest)
         {
-            await _peopleService.UpdatePerson(personRequest);
+            await _peopleUpdaterService.UpdatePerson(personRequest);
             TempData["NewUser"] = $"{personRequest?.PersonName ?? "Person"} has been succesfully updated.";
             return RedirectToAction("Index", "People");
         }
@@ -106,7 +120,7 @@ namespace ContactsManager.Controllers
         [HttpGet("delete-view/{personId}")]
         public async Task<IActionResult> DeleteView(Guid? personId)
         {
-            PersonResponse? personResponse = await _peopleService.GetPersonByPersonId(personId);
+            PersonResponse? personResponse = await _peopleGetterService.GetPersonByPersonId(personId);
 
             if (personResponse is null) return RedirectToAction("Index", "People");
 
@@ -116,8 +130,8 @@ namespace ContactsManager.Controllers
         [HttpPost("delete-person/{personId}")]
         public async Task<IActionResult> DeleteUser(Guid? personId)
         {
-            PersonResponse? personResponse = await _peopleService.GetPersonByPersonId(personId);
-            bool wasDeleted = await _peopleService.DeletePerson(personResponse?.PersonId);
+            PersonResponse? personResponse = await _peopleGetterService.GetPersonByPersonId(personId);
+            bool wasDeleted = await _peopleDeleterService.DeletePerson(personResponse?.PersonId);
 
             if(wasDeleted)
             {
@@ -135,7 +149,7 @@ namespace ContactsManager.Controllers
         public async Task<IActionResult> PeoplePDF()
         {
             // Get People
-            List<PersonResponse>? people = await _peopleService.GetPeople();
+            List<PersonResponse>? people = await _peopleGetterService.GetPeople();
 
             // Return rotativa view
             return new ViewAsPdf("PeoplePDF", people, ViewData)
@@ -154,14 +168,14 @@ namespace ContactsManager.Controllers
         [HttpGet("people-csv")]
         public async Task<IActionResult> PeopleCSV()
         {
-            MemoryStream memoryStream = await _peopleService.GetPeopleCSV();
+            MemoryStream memoryStream = await _peopleGetterService.GetPeopleCSV();
             return File(memoryStream, "application/octet-stream", "people.csv");
         }
 
         [HttpGet("people-excel")]
         public async Task<IActionResult> PeopleExcel()
         {
-            MemoryStream memoryStream = await _peopleService.GetPeopleExcel();
+            MemoryStream memoryStream = await _peopleGetterService.GetPeopleExcel();
             return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "people.xlsx");
         }
 
