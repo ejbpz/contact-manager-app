@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Serilog;
-using ContactsManager.Models;
+﻿using ContactsManager.Models;
 using ContactsManager.Services.Helpers;
 using ContactsManager.ServiceContracts;
 using ContactsManager.RepositoryContracts;
@@ -11,14 +9,10 @@ namespace ContactsManager.Services
     public class PeopleAdderService : IPeopleAdderService
     {
         private readonly IPeopleRepository _peopleRepository;
-        private readonly ILogger<PeopleAdderService> _logger;
-        private readonly IDiagnosticContext _diagnosticContext;
 
-        public PeopleAdderService(IPeopleRepository peopleRepository, ILogger<PeopleAdderService> logger, IDiagnosticContext diagnosticContext)
+        public PeopleAdderService(IPeopleRepository peopleRepository)
         {
             _peopleRepository = peopleRepository;
-            _logger = logger;
-            _diagnosticContext = diagnosticContext;
         }
 
         public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)

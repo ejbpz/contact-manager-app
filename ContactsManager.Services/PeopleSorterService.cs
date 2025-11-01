@@ -7,9 +7,9 @@ namespace ContactsManager.Services
 {
     public class PeopleSorterService : IPeopleSorterService
     {
-        private readonly ILogger<PeopleAdderService> _logger;
+        private readonly ILogger<PeopleSorterService> _logger;
 
-        public PeopleSorterService(ILogger<PeopleAdderService> logger)
+        public PeopleSorterService(ILogger<PeopleSorterService> logger)
         {
             _logger = logger;
         }

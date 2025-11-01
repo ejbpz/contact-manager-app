@@ -15,23 +15,23 @@ namespace ContactsManager.Services
     public class PeopleGetterService : IPeopleGetterService
     {
         private readonly IPeopleRepository _peopleRepository;
-        private readonly ILogger<PeopleAdderService> _logger;
+        private readonly ILogger<PeopleGetterService> _logger;
         private readonly IDiagnosticContext _diagnosticContext;
 
-        public PeopleGetterService(IPeopleRepository peopleRepository, ILogger<PeopleAdderService> logger, IDiagnosticContext diagnosticContext)
+        public PeopleGetterService(IPeopleRepository peopleRepository, ILogger<PeopleGetterService> logger, IDiagnosticContext diagnosticContext)
         {
             _peopleRepository = peopleRepository;
             _logger = logger;
             _diagnosticContext = diagnosticContext;
         }
 
-        public async Task<List<PersonResponse>> GetPeople()
+        public virtual async Task<List<PersonResponse>> GetPeople()
         {
             _logger.LogInformation("GetPeople of PeopleService.");
             return (await _peopleRepository.GetPeople()).Select(p => p.ToPersonResponse()).ToList();
         }
 
-        public async Task<PersonResponse?> GetPersonByPersonId(Guid? personId)
+        public virtual async Task<PersonResponse?> GetPersonByPersonId(Guid? personId)
         {
             if (personId is null) return null;
 
@@ -41,7 +41,7 @@ namespace ContactsManager.Services
             return person.ToPersonResponse();
         }
 
-        public async Task<List<PersonResponse>?> GetFilteredPeople(string searchBy, string? query)
+        public virtual async Task<List<PersonResponse>?> GetFilteredPeople(string searchBy, string? query)
         {
             _logger.LogInformation("GetFilteredPeople of PeopleService.");
             List<Person>? matchingPeople = new List<Person>();
@@ -102,7 +102,7 @@ namespace ContactsManager.Services
             return matchingPeople?.Select(p => p.ToPersonResponse()).ToList();
         }
 
-        public async Task<MemoryStream> GetPeopleCSV()
+        public virtual async Task<MemoryStream> GetPeopleCSV()
         {
             MemoryStream memoryStream = new MemoryStream();
             using (StreamWriter streamWriter = new StreamWriter(memoryStream))
@@ -145,7 +145,7 @@ namespace ContactsManager.Services
             return newMemoryStream;
         }
 
-        public async Task<MemoryStream> GetPeopleExcel()
+        public virtual async Task<MemoryStream> GetPeopleExcel()
         {
             MemoryStream memoryStream = new MemoryStream();
 

@@ -33,7 +33,8 @@ namespace ContactsManager
 
             services.AddScoped<ICountriesService, CountriesService>();
 
-            services.AddScoped<IPeopleGetterService, PeopleGetterService>();
+            services.AddScoped<PeopleGetterService, PeopleGetterService>();
+            services.AddScoped<IPeopleGetterService, PeopleGetterServiceChild>();
             services.AddScoped<IPeopleAdderService, PeopleAdderService>();
             services.AddScoped<IPeopleDeleterService, PeopleDeleterService>();
             services.AddScoped<IPeopleUpdaterService, PeopleUpdaterService>();

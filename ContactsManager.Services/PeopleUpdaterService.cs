@@ -11,10 +11,10 @@ namespace ContactsManager.Services
     public class PeopleUpdaterService : IPeopleUpdaterService
     {
         private readonly IPeopleRepository _peopleRepository;
-        private readonly ILogger<PeopleAdderService> _logger;
+        private readonly ILogger<PeopleUpdaterService> _logger;
         private readonly IPeopleGetterService _peopleGetterService;
 
-        public PeopleUpdaterService(IPeopleGetterService peopleGetterService, IPeopleRepository peopleRepository, ILogger<PeopleAdderService> logger)
+        public PeopleUpdaterService(IPeopleGetterService peopleGetterService, IPeopleRepository peopleRepository, ILogger<PeopleUpdaterService> logger)
         {
             _peopleRepository = peopleRepository;
             _logger = logger;
