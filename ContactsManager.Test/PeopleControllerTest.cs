@@ -1,17 +1,16 @@
-﻿using AutoFixture;
-using ContactsManager.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Moq;
+using AutoFixture;
+using FluentAssertions;
 using ContactsManager.Models;
+using ContactsManager.Controllers;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
-using ContactsManager.Services;
-using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.Extensions.Logging;
-using Moq;
 
 namespace ContactsManager.Test
 {
@@ -22,14 +21,16 @@ namespace ContactsManager.Test
         private readonly IPeopleDeleterService _peopleDeleterService;
         private readonly IPeopleUpdaterService _peopleUpdaterService;
         private readonly IPeopleSorterService _peopleSorterService;
-        private readonly ICountriesService _countriesService;
+        private readonly ICountriesAdderService _countriesAdderService;
+        private readonly ICountriesGetterService _countriesGetterService;
 
         private readonly Mock<IPeopleAdderService> _mockPeopleAdderService;
         private readonly Mock<IPeopleGetterService> _mockPeopleGetterService;
         private readonly Mock<IPeopleDeleterService> _mockPeopleDeleterService;
         private readonly Mock<IPeopleUpdaterService> _mockPeopleUpdaterService;
         private readonly Mock<IPeopleSorterService> _mockPeopleSorterService;
-        private readonly Mock<ICountriesService> _mockCountriesService;
+        private readonly Mock<ICountriesAdderService> _mockCountriesAdderService;
+        private readonly Mock<ICountriesGetterService> _mockCountriesGetterService;
 
         private readonly PeopleController peopleController;
 
@@ -48,7 +49,9 @@ namespace ContactsManager.Test
             _mockPeopleUpdaterService = new Mock<IPeopleUpdaterService>();
             _mockPeopleSorterService = new Mock<IPeopleSorterService>();
 
-            _mockCountriesService = new Mock<ICountriesService>();
+            _mockCountriesAdderService = new Mock<ICountriesAdderService>();
+            _mockCountriesGetterService = new Mock<ICountriesGetterService>();
+
             _mockLoggerPeopleController = new Mock<ILogger<PeopleController>>();
 
             _peopleAdderService = _mockPeopleAdderService.Object;
@@ -57,10 +60,12 @@ namespace ContactsManager.Test
             _peopleUpdaterService = _mockPeopleUpdaterService.Object;
             _peopleSorterService = _mockPeopleSorterService.Object;
 
-            _countriesService = _mockCountriesService.Object;
+            _countriesAdderService = _mockCountriesAdderService.Object;
+            _countriesGetterService = _mockCountriesGetterService.Object;
+
             _loggerPeopleController = _mockLoggerPeopleController.Object;
 
-            peopleController = new PeopleController(_peopleAdderService, _peopleGetterService, _peopleDeleterService, _peopleUpdaterService, _peopleSorterService, _countriesService, _loggerPeopleController);
+            peopleController = new PeopleController(_peopleAdderService, _peopleGetterService, _peopleDeleterService, _peopleUpdaterService, _peopleSorterService, _countriesAdderService, _countriesGetterService, _loggerPeopleController);
         }
 
         #region Index
@@ -101,7 +106,7 @@ namespace ContactsManager.Test
             // Arrange
             List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
 
-            _mockCountriesService.Setup(m => m
+            _mockCountriesGetterService.Setup(m => m
                 .GetCountries())
                 .ReturnsAsync(countries);
 
@@ -150,7 +155,7 @@ namespace ContactsManager.Test
                 .With(p => p.Gender, GenderOptions.Other.ToString())
                 .Create();
 
-            _mockCountriesService.Setup(m => m
+            _mockCountriesGetterService.Setup(m => m
                 .GetCountries())
                 .ReturnsAsync(countries);
 
@@ -173,7 +178,7 @@ namespace ContactsManager.Test
             // Arrange
             List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
 
-            _mockCountriesService.Setup(m => m
+            _mockCountriesGetterService.Setup(m => m
                 .GetCountries())
                 .ReturnsAsync(countries);
 

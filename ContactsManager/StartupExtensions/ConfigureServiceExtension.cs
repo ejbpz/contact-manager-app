@@ -31,10 +31,11 @@ namespace ContactsManager
             
             services.AddScoped<IPeopleRepository, PeopleRepository>();
 
-            services.AddScoped<ICountriesService, CountriesService>();
+            services.AddScoped<ICountriesAdderService, CountriesAdderService>();
+            services.AddScoped<ICountriesGetterService, CountriesGetterService>();
 
             services.AddScoped<PeopleGetterService, PeopleGetterService>();
-            services.AddScoped<IPeopleGetterService, PeopleGetterServiceChild>();
+            services.AddScoped<IPeopleGetterService, PeopleGetterServiceWithFewExcelFields>();
             services.AddScoped<IPeopleAdderService, PeopleAdderService>();
             services.AddScoped<IPeopleDeleterService, PeopleDeleterService>();
             services.AddScoped<IPeopleUpdaterService, PeopleUpdaterService>();

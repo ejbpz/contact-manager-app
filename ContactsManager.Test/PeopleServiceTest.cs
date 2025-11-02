@@ -25,8 +25,14 @@ namespace ContactsManager.Test
         private readonly Mock<IPeopleRepository> _mockPeopleRepository;
         private readonly IPeopleRepository _peopleRepository;
 
-        private readonly Mock<ILogger<PeopleAdderService>> _mockLoggerPeopleService;
-        private readonly ILogger<PeopleAdderService> _loggerPeopleService;
+        private readonly Mock<ILogger<PeopleAdderService>> _mockLoggerPeopleAdderService;
+        private readonly ILogger<PeopleAdderService> _loggerPeopleAdderService;
+        private readonly Mock<ILogger<PeopleGetterService>> _mockLoggerPeopleGetterService;
+        private readonly ILogger<PeopleGetterService> _loggerPeopleGetterService;
+        private readonly Mock<ILogger<PeopleUpdaterService>> _mockLoggerPeopleUpdaterService;
+        private readonly ILogger<PeopleUpdaterService> _loggerPeopleUpdaterService;
+        private readonly Mock<ILogger<PeopleSorterService>> _mockLoggerPeopleSorterService;
+        private readonly ILogger<PeopleSorterService> _loggerPeopleSorterService;
 
         private readonly Mock<IDiagnosticContext> _mockDiagnosticContext;
         private readonly IDiagnosticContext _diagnosticContext;
@@ -44,14 +50,23 @@ namespace ContactsManager.Test
             _mockDiagnosticContext = new Mock<IDiagnosticContext>();
             _diagnosticContext = _mockDiagnosticContext.Object;
 
-            _mockLoggerPeopleService = new Mock<ILogger<PeopleAdderService>>();
-            _loggerPeopleService = _mockLoggerPeopleService.Object;
+            _mockLoggerPeopleAdderService = new Mock<ILogger<PeopleAdderService>>();
+            _loggerPeopleAdderService = _mockLoggerPeopleAdderService.Object;
 
-            _peopleAdderService = new PeopleAdderService(_peopleRepository, _loggerPeopleService, _diagnosticContext);
-            _peopleGetterService = new PeopleGetterService(_peopleRepository, _loggerPeopleService, _diagnosticContext);
+            _mockLoggerPeopleGetterService = new Mock<ILogger<PeopleGetterService>>();
+            _loggerPeopleGetterService = _mockLoggerPeopleGetterService.Object;
+
+            _mockLoggerPeopleUpdaterService = new Mock<ILogger<PeopleUpdaterService>>();
+            _loggerPeopleUpdaterService = _mockLoggerPeopleUpdaterService.Object;
+
+            _mockLoggerPeopleSorterService = new Mock<ILogger<PeopleSorterService>>();
+            _loggerPeopleSorterService = _mockLoggerPeopleSorterService.Object;
+
+            _peopleAdderService = new PeopleAdderService(_peopleRepository);
+            _peopleGetterService = new PeopleGetterService(_peopleRepository, _loggerPeopleGetterService, _diagnosticContext);
             _peopleDeleterService = new PeopleDeleterService(_peopleRepository);
-            _peopleUpdaterService = new PeopleUpdaterService(_peopleGetterService, _peopleRepository, _loggerPeopleService);
-            _peopleSorterService = new PeopleSorterService(_loggerPeopleService);
+            _peopleUpdaterService = new PeopleUpdaterService(_peopleGetterService, _peopleRepository, _loggerPeopleUpdaterService);
+            _peopleSorterService = new PeopleSorterService(_loggerPeopleSorterService);
 
             _testOutputHelper = testOutputHelper;
         }

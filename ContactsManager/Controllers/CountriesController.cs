@@ -7,11 +7,11 @@ namespace ContactsManager.Controllers
     [Route("countries")]
     public class CountriesController : Controller
     {
-        private ICountriesService _countriesService;
+        private ICountriesAdderService _countriesAdderService;
 
-        public CountriesController(ICountriesService countriesService)
+        public CountriesController(ICountriesAdderService countriesService)
         {
-            _countriesService = countriesService;
+            _countriesAdderService = countriesService;
         }
 
         [HttpGet("upload-excel")]
@@ -37,7 +37,7 @@ namespace ContactsManager.Controllers
                 return View();
             }
 
-            int rowsAdded = await _countriesService.UploadCountriesFromExcelFile(formFile);
+            int rowsAdded = await _countriesAdderService.UploadCountriesFromExcelFile(formFile);
             // Info message
 
             return View();

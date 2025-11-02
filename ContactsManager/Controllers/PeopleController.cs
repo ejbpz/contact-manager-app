@@ -27,7 +27,9 @@ namespace ContactsManager.Controllers
         private readonly IPeopleUpdaterService _peopleUpdaterService;
         private readonly IPeopleSorterService _peopleSorterService;
 
-        private readonly ICountriesService _countriesService;
+        private readonly ICountriesAdderService _countriesAdderService;
+        private readonly ICountriesGetterService _countriesGetterService;
+
         private readonly ILogger<PeopleController> _logger;
 
         public PeopleController(IPeopleAdderService peopleAdderService,
@@ -35,7 +37,8 @@ namespace ContactsManager.Controllers
                                 IPeopleDeleterService peopleDeleterService,
                                 IPeopleUpdaterService peopleUpdaterService,
                                 IPeopleSorterService peopleSorterService,
-                                ICountriesService countriesService,
+                                ICountriesAdderService countriesAdderService,
+                                ICountriesGetterService countriesGetterService,
                                 ILogger<PeopleController> logger)
         {
             _peopleAdderService = peopleAdderService;
@@ -44,7 +47,9 @@ namespace ContactsManager.Controllers
             _peopleUpdaterService = peopleUpdaterService;
             _peopleSorterService = peopleSorterService;
 
-            _countriesService = countriesService;
+            _countriesAdderService = countriesAdderService;
+            _countriesGetterService = countriesGetterService;
+
             _logger = logger;
         }
 
@@ -191,7 +196,7 @@ namespace ContactsManager.Controllers
 
         private async Task CallingCountries()
         {
-            List<CountryResponse>? countries = await _countriesService.GetCountries();
+            List<CountryResponse>? countries = await _countriesGetterService.GetCountries();
             ViewData["Countries"] = countries.Select(c => new SelectListItem() { Text = c.CountryName, Value = c.CountryId.ToString() });
         }
     }

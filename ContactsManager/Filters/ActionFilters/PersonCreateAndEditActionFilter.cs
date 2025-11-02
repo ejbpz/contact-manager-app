@@ -1,20 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using ContactsManager.Controllers;
 using ContactsManager.ServiceContracts;
 using ContactsManager.ServiceContracts.DTOs;
 using ContactsManager.ServiceContracts.Enums;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace ContactsManager.Filters.ActionFilters
 {
     public class PersonCreateAndEditActionFilter : IAsyncActionFilter
     {
-        private readonly ICountriesService _countriesService;
+        private readonly ICountriesGetterService _countriesGetterService;
 
-        public PersonCreateAndEditActionFilter(ICountriesService countriesService)
+        public PersonCreateAndEditActionFilter(ICountriesGetterService countriesGetterService)
         {
-            _countriesService = countriesService;
+            _countriesGetterService = countriesGetterService;
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -54,7 +54,7 @@ namespace ContactsManager.Filters.ActionFilters
 
         private async Task CallingCountries(ViewDataDictionary viewData)
         {
-            List<CountryResponse>? countries = await _countriesService.GetCountries();
+            List<CountryResponse>? countries = await _countriesGetterService.GetCountries();
             viewData["Countries"] = countries.Select(c => new SelectListItem() { Text = c.CountryName, Value = c.CountryId.ToString() });
         }
     }
