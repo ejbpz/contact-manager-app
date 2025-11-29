@@ -19,16 +19,16 @@ This application demonstrates solid practical skills in:
 
 ## 🧪 Features
 
-✔️ Full contact management (Create, Read, Update, Delete)
-✔️ Full ASP.NET Core Identity integration (login, registration, roles)
-✔️ Custom Tag Helpers and View Components for reusable UI
-✔️ Clean Architecture with separation of concerns
-✔️ Server-side validation and Filters (action, exception, resource filters)
-✔️ Repository pattern + EF Core
-✔️ Logging with built-in ASP.NET Core abstractions
-✔️ Unit testing using xUnit
-✔️ Responsive design with Tailwind 4
-✔️ Secure form handling with antiforgery tokens
+✔️ Full contact management (Create, Read, Update, Delete)  
+✔️ Full ASP.NET Core Identity integration (login, registration, roles)  
+✔️ Custom Tag Helpers and View Components for reusable UI  
+✔️ Clean Architecture with separation of concerns  
+✔️ Server-side validation and Filters (action, exception, resource filters)  
+✔️ Repository pattern + EF Core  
+✔️ Logging with built-in ASP.NET Core abstractions  
+✔️ Unit testing using xUnit  
+✔️ Responsive design with Tailwind 4  
+✔️ Secure form handling with antiforgery tokens  
 
 ---
 
@@ -62,7 +62,7 @@ git clone https://github.com/ejbpz/contacts-manager-app.git
 ```
 2. Navigate to the project directory:
 ```bash
-cd contacts-manager
+cd contacts-manager-app
 ```
 3. Restore packages:
 ```bash
