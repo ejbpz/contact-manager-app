@@ -1,0 +1,101 @@
+﻿@model RegisterRequest
+@{
+    ViewBag.Title = "Register";
+}
+
+<section class="container mx-auto max-w-96 sm:max-w-[600px] flex flex-col justify-center items-center h-screen w-full">
+    <div>
+        Already registered? <a asp-action="Login" asp-controller="Account" class="font-semibold hover:underline">Login</a>
+        <h2 class="my-5 font-semibold text-2xl">Register</h2>
+    </div>
+
+    <form asp-controller="Account" asp-action="Register" method="post">
+        @* Person Name *@
+        <div class="rounded-xl bg-white p-4 shadow-lg">
+            <label asp-for="PersonName" class="font-semibold">
+                * Name
+            </label>
+            <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
+                <input asp-for="PersonName" placeholder="John Doe" class="absolute w-full focus:outline-none" />
+                <span asp-validation-for="PersonName" class="errors hidden"></span>
+            </div>
+        </div>
+
+        @* Person Email *@
+        <div class="rounded-xl bg-white p-4 shadow-lg mt-4">
+            <label asp-for="Email" class="font-semibold">
+                * Email
+            </label>
+            <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
+                <input asp-for="Email" placeholder="email@example.com" class="absolute w-full focus:outline-none" />
+                <span asp-validation-for="Email" class="errors hidden"></span>
+            </div>
+        </div>
+
+        @* Person Phone Number *@
+        <div class="rounded-xl bg-white p-4 shadow-lg mt-4">
+            <label asp-for="PhoneNumber" class="font-semibold">
+                * Phone
+            </label>
+            <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
+                <input asp-for="PhoneNumber" placeholder="1247 8988" class="absolute w-full focus:outline-none" />
+                <span asp-validation-for="PhoneNumber" class="errors hidden"></span>
+            </div>
+        </div>
+
+        @* User Type *@
+        <div class="mt-4">
+            <div>
+                <label asp-for="UserType" class="font-semibold">Role</label>
+            </div>
+            <div>
+                <input type="radio" id="User" value="User" asp-for="UserType" checked />
+                <label for="User">User</label>
+
+                <input type="radio" id="Admin" value="Admin" asp-for="UserType" />
+                <label for="Admin">Admin</label>
+            </div>
+        </div>
+
+        @* Person Password *@
+        <div class="rounded-xl bg-white p-4 shadow-lg mt-4">
+            <label asp-for="Password" class="font-semibold">
+                * Password
+            </label>
+            <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
+                <input asp-for="Password" class="absolute w-full focus:outline-none" />
+                <span asp-validation-for="Password" class="errors hidden"></span>
+            </div>
+        </div>
+
+        @* Person Confirm Password *@
+        <div class="rounded-xl bg-white p-4 shadow-lg mt-4">
+            <label asp-for="ConfirmPassword" class="font-semibold">
+                * Confirm Password
+            </label>
+            <div class="relative flex min-w-50 items-center rounded-sm border-gray-200 border-[1px] bg-gray-200 px-1 py-[15px]">
+                <input asp-for="ConfirmPassword" class="absolute w-full focus:outline-none" />
+                <span asp-validation-for="ConfirmPassword" class="errors hidden"></span>
+            </div>
+        </div>
+
+        @* Register Button *@
+        <div class="mt-4">
+            <div class="block w-20 h-10 cursor-pointer rounded-sm border-[1px] border-[#43A490] bg-[#43A490] px-1 py-[5.3px] font-medium text-white">
+                <button type="submit" class="h-full w-full cursor-pointer">Register</button>
+            </div>
+
+            <div asp-validation-summary="All">
+                @if(ViewBag.Errors is not null)
+                {
+                    <ul>
+                        @foreach(string error in ViewBag.Errors)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </form>
+</section>
