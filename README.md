@@ -27,7 +27,7 @@ This application demonstrates solid practical skills in:
 ✔️ Repository pattern + EF Core  
 ✔️ Logging with built-in ASP.NET Core abstractions  
 ✔️ Unit testing using xUnit  
-✔️ Responsive design with Tailwind 4  
+✔️ Responsive design with Tailwind CSS v4  
 ✔️ Secure form handling with antiforgery tokens  
 
 ---
@@ -42,7 +42,7 @@ This application demonstrates solid practical skills in:
 - **Clean Architecture**  
 - **Dependency Injection**  
 - **Logging & Filters**  
-- **Tailwind 4**  
+- **Tailwind CSS v4**  
 - **SQL Server**  
 
 ---
